@@ -20,3 +20,10 @@ These skills are designed to be used with Claude Code and Codex. Refer to the in
 ## License
 
 See individual skill files for license information.
+
+## SSH Key Backup
+
+SSH秘密鍵のバックアップは以下の場所に保存されています：
+- 場所: `~/Workspaces/backups/ssh-keys/`
+- ファイル名: `id_ed25519_backup_YYYYMMDD`（日付付き）
+- 注意: このフォルダはローカル（iCloud非同期）に保存されています
