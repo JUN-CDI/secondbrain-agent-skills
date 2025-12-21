@@ -1,0 +1,31 @@
+# Ignore everything except skill files
+*
+
+# But include .gitignore and skill directories
+!.gitignore
+!.claude/
+!.claude/skills/
+!.claude/skills/**/*
+!.codex/
+!.codex/skills/
+!.codex/skills/**/*
+
+# Ignore OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore temporary files
+*.tmp
+*.log
