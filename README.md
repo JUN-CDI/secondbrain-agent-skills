@@ -1,29 +1,23 @@
 # SecondBrain Agent Skills
 
-This repository contains agent skills for Claude Code and Codex, designed to work with the SecondBrain knowledge management system.
+This repository contains Agent Skills (`<skill>/SKILL.md`) for the SecondBrain knowledge management system.
 
-## Skills
+## Skills (root)
 
-### Claude Skills (`.claude/skills/`)
+- **data-safety**: Prevent committing real data outputs (CSV/XLSX, deliverables, etc.)
+- **diff-review**: Review staged git diffs with concrete, prioritized findings
+- **git-checkpoint**: Create clean checkpoints via `git add -p` → `git diff --staged`
+- **ops-maintenance**: Check official docs/release notes and update local workflows/docs
 
-- **changelog-watcher**: Check for Claude Code updates and new features
-- **dev-handoff**: Create concise development handoff summaries
-- **git-checkpoint**: Stage only intended changes with git add -p
-- **input-processor**: Process and organize files in 03_Input folder
-- **ops-maintenance**: Check official docs/release notes and update workflows
-- **project-scaffold**: Initialize new development projects with standard structure
+## Legacy (Claude Code)
+
+`/.claude/skills/` is kept for compatibility with older Claude Code setups. Cursor/Codex usage should prefer the root skill packages above.
 
 ## Installation
 
-These skills are designed to be used with Claude Code and Codex. Refer to the individual skill documentation for installation and usage instructions.
+- **Cursor (Nightly)**: Settings → Rules → Import Settings → Agent Skills → add this GitHub repo URL
+- **Codex CLI**: copy/sync skill directories into `~/.codex/skills/` (see your local `sync-codex-skills.sh`)
 
-## License
+## Notes
 
-See individual skill files for license information.
-
-## SSH Key Backup
-
-SSH秘密鍵のバックアップは以下の場所に保存されています：
-- 場所: `~/Workspaces/backups/ssh-keys/`
-- ファイル名: `id_ed25519_backup_YYYYMMDD`（日付付き）
-- 注意: このフォルダはローカル（iCloud非同期）に保存されています
+- Do not commit secrets (SSH private keys, tokens, etc.) to this repository.
