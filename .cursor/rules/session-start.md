@@ -9,6 +9,11 @@
 
 これにより、Claude Code / Codex / Cursor 間で作業状態を共有できます。
 
+## MEM（観測→昇格）運用（SSOT）
+
+- 永続化するものは Atlas のSSOTへ昇格: `Atlas/意思決定.md` / `Atlas/パターン.md` / `Atlas/ガードレール.md`
+- Claude Codeはセッション開始時にSSOTの最新項目を自動表示（`.claude/settings.local.json` → `System/Scripts/session-init-mem.sh`）
+
 ## ツール間の引き継ぎ
 
 | ツール | 設定ファイル | Skills |

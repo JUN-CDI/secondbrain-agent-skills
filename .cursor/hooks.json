@@ -3,19 +3,18 @@
   "hooks": {
     "beforeSubmitPrompt": [
       {
-        "command": "./hooks/log-prompt.sh"
+        "command": "bash \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/.cursor/hooks/log-prompt.sh\""
       }
     ],
     "afterFileEdit": [
       {
-        "command": "./hooks/log-file-edit.sh"
+        "command": "bash \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/.cursor/hooks/log-file-edit.sh\""
       }
     ],
     "stop": [
       {
-        "command": "./hooks/log-session-stop.sh"
+        "command": "bash \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/.cursor/hooks/log-session-stop.sh\""
       }
     ]
   }
 }
-

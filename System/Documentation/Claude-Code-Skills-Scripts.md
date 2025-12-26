@@ -180,6 +180,13 @@ Cursor（安定版/無効時）: .cursor/commands/ に変換
 ```bash
 # Vault側を原本として同期
 ./System/Scripts/sync-codex-skills.sh
+
+# 初回セットアップ（System/Skills が無い場合）
+# - Networkあり: 原本repoをcloneしてから同期
+./System/Scripts/sync-codex-skills.sh --clone
+#
+# - Offline: 既存の ~/.codex/skills から原本を復元して同期
+./System/Scripts/sync-codex-skills.sh --from-codex
 ```
 
 **機能:**
@@ -222,12 +229,19 @@ Claude Code操作時に自動実行されるアクションです。Hooksはユ�
 
 | イベント | 動作 |
 |---------|------|
-| `SessionStart` | セッション開始ログ + ops-maintenance月次リマインド + 運用更新ログ24h通知 |
+| `SessionStart` | セッション開始ログ + ops-maintenance月次リマインド + 引き継ぎ24h通知 + SSOT（D/P/G）ダイジェスト表示 |
 | `PostToolUse` (Write/Edit) | ファイル変更をログ記録 |
+
+### MEM（観測→昇格）の置き場（SSOT）
+
+- 意思決定（decision）: `Atlas/意思決定.md`（D01...）
+- パターン（bugfix/pattern）: `Atlas/パターン.md`（P01...）
+- ガードレール（guard）: `Atlas/ガードレール.md`（G01...）
+- セッション開始時の自動表示: `System/Scripts/session-init-mem.sh`（`.claude/settings.local.json` の SessionStart から実行）
 
 ### ツール間引き継ぎの仕組み
 
-全ツール共通で「運用更新ログ」を参照することで、引き継ぎを実現:
+全ツール共通で `System/Documentation/引き継ぎ.md` を参照することで、引き継ぎを実現:
 
 | ツール | 設定場所 | 確認タイミング |
 |--------|----------|----------------|
@@ -235,7 +249,7 @@ Claude Code操作時に自動実行されるアクションです。Hooksはユ�
 | Codex | AGENTS.md | セッション開始時に参照 |
 | Cursor | `.cursor/rules/session-start.md` | セッション開始時に参照 |
 
-**共通参照ファイル**: `System/Documentation/運用更新ログ.md`
+**共通参照ファイル**: `System/Documentation/引き継ぎ.md`
 
 ### Hook設定例
 

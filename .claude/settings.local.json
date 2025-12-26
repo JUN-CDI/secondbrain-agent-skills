@@ -29,7 +29,10 @@
       "Bash(claude plugin --help:*)",
       "Bash(claude plugin marketplace add Chachamaru127/claude-code-harness)",
       "Bash(claude plugin install:*)",
-      "Bash(claude:*)"
+      "Bash(claude:*)",
+      "Bash(xattr:*)",
+      "Bash(chflags nohidden:*)",
+      "Bash(git pull:*)"
     ]
   },
   "hooks": {
@@ -47,6 +50,10 @@
           {
             "type": "command",
             "command": "log_file=\"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Documentation/引き継ぎ.md\"; if [ -f \"$log_file\" ]; then mod_time=$(stat -f %m \"$log_file\"); now=$(date +%s); diff=$((now - mod_time)); if [ $diff -lt 86400 ]; then echo \"📋 引き継ぎ.md が24時間以内に更新されています。確認してください。\"; fi; fi"
+          },
+          {
+            "type": "command",
+            "command": "bash \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Scripts/session-init-mem.sh\" 2>/dev/null || true"
           }
         ]
       }
