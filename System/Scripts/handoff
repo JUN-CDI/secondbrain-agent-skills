@@ -356,7 +356,7 @@ TS="$(date '+%Y-%m-%d %H:%M')"
     printf '%s\n' '```'
 
     printf -- "- ChangedFiles (top %s):\n" "$FILES_MAX"
-    changed_files="$(git -C "$REPO_ROOT" diff --name-only HEAD 2>/dev/null || true)"
+    changed_files="$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null || true)"
     if [[ -z "${changed_files// }" ]]; then
       printf "  - (none)\n"
     else
@@ -370,4 +370,3 @@ TS="$(date '+%Y-%m-%d %H:%M')"
 } >> "$HANDOFF_FILE"
 
 echo "OK: appended to $HANDOFF_FILE"
-
