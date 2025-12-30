@@ -225,7 +225,7 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 
 - Purpose: Cursor通知の矛盾解消と handoff スナップショット改善
 - Now: handoff.mdの文言補正済み、handoffスクリプト更新コミット済み（push待ち）
-- Next: 次回は ## main...origin/main [ahead 1] M handoff.md で状態確認してから作業再開
+- Next: 次回は `git status -sb` で状態確認してから作業再開
 - Risk: なし
 - Decision: GitStatus/Diff/ChangedFilesは追記前スナップショットを記録
 - Tried/Result: 通知原因: handoff追記後にstatus取得 → M handoff.md となった
@@ -254,7 +254,7 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 
 - Purpose: 運用分析/深掘り分析の統合とエラー学習の定義
 - Now: 統合ドキュメント作成・旧分析をarchive移動・運用更新ログ追記・commit/push済み
-- Next: 必要なら を読み直し、学習項目を拡張
+- Next: 必要なら `System/Documentation/運用フロー分析-統合.md` を読み直し、学習項目を拡張
 - Risk: なし
 - Decision: 運用分析は統合版に集約し、旧文書はarchiveへ
 - Tried/Result: docs commit/push 完了
@@ -276,3 +276,33 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+### 2025-12-30 11:35 - Tool: codex - Mode: full
+
+- Purpose: 運用分析統合ドキュメントの整理とhandoff修正
+- Now: 統合doc作成・archive移動・運用更新ログ追記・push済み、handoff Next修正中
+- Next: 必要なら System/Documentation/運用フロー分析-統合.md を追記
+- Risk: なし
+- Decision: エラー学習を統合ドキュメントに明記
+- Tried/Result: docs commit/push、handoff Next 文言修正
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main [ahead 1]
+MM handoff.md
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+ handoff.md | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+ handoff.md | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
+```
+- ChangedFiles (snapshot, top 20):
+  - MM handoff.md
