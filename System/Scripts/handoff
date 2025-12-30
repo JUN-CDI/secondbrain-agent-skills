@@ -107,7 +107,7 @@ extract_last_slot() {
 strip_carry_prefix() {
   # Remove "(carry) " if present at the beginning.
   local s="${1:-}"
-  printf '%s' "$s" | sed -E 's/^\\(carry\\)[[:space:]]+//'
+  printf '%s' "$s" | sed -E 's/^\(carry\)[[:space:]]+//'
 }
 
 ensure_handoff_file() {
