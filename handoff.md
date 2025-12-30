@@ -387,3 +387,28 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+### 2025-12-30 15:01 - Tool: codex - Mode: full
+
+- Purpose: セッション終了（handoff更新）
+- Now: endwork実行・handoff.md更新
+- Next: 次回は git status -sb で状態確認してから再開
+- Risk: なし
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
