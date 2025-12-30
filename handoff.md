@@ -249,3 +249,30 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 ```
 - ChangedFiles (snapshot, top 20):
   -  M handoff.md
+
+### 2025-12-30 11:34 - Tool: codex - Mode: full
+
+- Purpose: 運用分析/深掘り分析の統合とエラー学習の定義
+- Now: 統合ドキュメント作成・旧分析をarchive移動・運用更新ログ追記・commit/push済み
+- Next: 必要なら を読み直し、学習項目を拡張
+- Risk: なし
+- Decision: 運用分析は統合版に集約し、旧文書はarchiveへ
+- Tried/Result: docs commit/push 完了
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
