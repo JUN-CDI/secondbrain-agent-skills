@@ -320,6 +320,17 @@ fi
 
 TS="$(date '+%Y-%m-%d %H:%M')"
 
+STATUS_SNAPSHOT=""
+DIFFSTAT_UNSTAGED_SNAPSHOT=""
+DIFFSTAT_STAGED_SNAPSHOT=""
+CHANGED_FILES_SNAPSHOT=""
+if [[ -n "$REPO_ROOT" ]]; then
+  STATUS_SNAPSHOT="$(git -C "$REPO_ROOT" status -sb 2>/dev/null | head -n "$STATUS_MAX_LINES" || true)"
+  DIFFSTAT_UNSTAGED_SNAPSHOT="$(git -C "$REPO_ROOT" diff --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true)"
+  DIFFSTAT_STAGED_SNAPSHOT="$(git -C "$REPO_ROOT" diff --staged --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true)"
+  CHANGED_FILES_SNAPSHOT="$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null || true)"
+fi
+
 {
   printf "\n### %s - Tool: %s - Mode: %s\n\n" "$TS" "$TOOL" "$MODE"
   printf -- "- Purpose: %s\n" "$PURPOSE"
@@ -340,23 +351,23 @@ TS="$(date '+%Y-%m-%d %H:%M')"
     printf -- "- Repo: %s\n" "$REPO_ROOT"
     printf -- "- GitBranch: %s\n" "$CUR_BRANCH"
 
-    printf -- "- GitStatus (top %s lines):\n" "$STATUS_MAX_LINES"
+    printf -- "- GitStatus (snapshot, top %s lines):\n" "$STATUS_MAX_LINES"
     printf '%s\n' '```text'
-    git -C "$REPO_ROOT" status -sb 2>/dev/null | head -n "$STATUS_MAX_LINES" || true
+    printf '%s\n' "$STATUS_SNAPSHOT"
     printf '%s\n' '```'
 
-    printf -- "- GitDiffStat (unstaged, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
+    printf -- "- GitDiffStat (unstaged, snapshot, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
     printf '%s\n' '```text'
-    git -C "$REPO_ROOT" diff --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true
+    printf '%s\n' "$DIFFSTAT_UNSTAGED_SNAPSHOT"
     printf '%s\n' '```'
 
-    printf -- "- GitDiffStat (staged, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
+    printf -- "- GitDiffStat (staged, snapshot, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
     printf '%s\n' '```text'
-    git -C "$REPO_ROOT" diff --staged --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true
+    printf '%s\n' "$DIFFSTAT_STAGED_SNAPSHOT"
     printf '%s\n' '```'
 
-    printf -- "- ChangedFiles (top %s):\n" "$FILES_MAX"
-    changed_files="$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null || true)"
+    printf -- "- ChangedFiles (snapshot, top %s):\n" "$FILES_MAX"
+    changed_files="$CHANGED_FILES_SNAPSHOT"
     if [[ -z "${changed_files// }" ]]; then
       printf "  - (none)\n"
     else
