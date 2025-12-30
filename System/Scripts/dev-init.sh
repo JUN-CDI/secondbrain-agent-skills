@@ -115,6 +115,17 @@ touch "$PROJECT_DIR/docs/.gitkeep"
 touch "$PROJECT_DIR/samples/.gitkeep"
 touch "$PROJECT_DIR/deliverables/.gitkeep"
 
+# Create handoff SSOT
+cat > "$PROJECT_DIR/handoff.md" << 'EOF'
+# Handoff (resume SSOT)
+
+This file is the single source of truth for resuming work in this repo.
+
+- Switch / uncertainty: `handoff quick` (Next only)
+- Session end: `wrapup` (recommended) or `endwork` (minimal)
+
+EOF
+
 # Create VSCode/Cursor helpers
 echo -e "${YELLOW}🤖 Creating VSCode/Cursor helpers...${NC}"
 cat > "$PROJECT_DIR/.vscode/tasks.json" << 'EOF'
@@ -181,6 +192,11 @@ cat > "$PROJECT_DIR/.cursor/rules/ai-workflow.md" << 'EOF'
 2. Checkpoint: `git status` → `git diff` → `git add -p` → `git diff --staged`.
 3. Ask Codex to review (prefer staged diff): start `codex` and run `/review`.
 4. Apply fixes and re-check diff.
+
+## Handoff (resume SSOT)
+- SSOT is repo-root `handoff.md`.
+  - Switch / uncertainty: `handoff quick` (Next only)
+  - Session end: `wrapup` (recommended) / `endwork` (minimal; commits only `handoff.md`)
 EOF
 
 cat > "$PROJECT_DIR/.cursor/commands/codex-review.md" << 'EOF'
@@ -214,6 +230,79 @@ cat > "$PROJECT_DIR/.cursor/commands/git-checkpoint.md" << 'EOF'
 6. サンプル/成果物（`samples/`, `deliverables/`, `*.csv`, `*.xlsx`）が追跡されていないか確認
 EOF
 
+cat > "$PROJECT_DIR/.cursor/commands/diff-review.md" << 'EOF'
+# 差分レビュー（ステージ差分）
+
+## Description
+`git diff --staged` を前提に、短く具体的なレビューを返します（P0/P1/P2）。
+
+## Prompt
+次を実行してください。
+
+1. `git status` と `git diff --staged` で差分を把握
+2. 変更の意図を1〜2行で要約
+3. 指摘は優先度順（P0/P1/P2）で列挙
+   - 理由（何が問題か）
+   - 具体的な修正案（可能ならパッチ/擬似コード）
+   - 影響範囲（どこが壊れうるか）
+   - 確認手順（どう確認するか）
+4. 新規/更新ファイルは、命名・配置・責務の妥当性も確認
+5. データ混入チェック（`samples/`, `deliverables/`, `*.csv`, `*.xlsx`）
+6. 最後に「このまま進めて良いか」を Yes/No（条件付き可）で結論
+EOF
+
+cat > "$PROJECT_DIR/.cursor/commands/handoff.md" << 'EOF'
+# Handoff（再開SSOTの更新）
+
+## Description
+ツール切替後に迷わず再開できるよう、**repo直下の `handoff.md`** を更新します。
+
+## Prompt
+対象repoで `handoff` を実行してください（デフォルト quick）。
+
+```bash
+handoff quick --next "<next action>"
+```
+
+Nextは「再開した瞬間に最初にやる1アクション」を具体的に（コマンド/ファイル/確認点）。
+EOF
+
+cat > "$PROJECT_DIR/.cursor/commands/endwork.md" << 'EOF'
+# Endwork（終了: handoff full + handoff.mdだけcommit）
+
+## Description
+セッション終了時に、`handoff full` を残してから **`handoff.md` だけ**をcommitします（他ファイルを巻き込まない）。
+
+## Prompt
+対象repoで `endwork` を実行してください。
+
+```bash
+endwork
+```
+EOF
+
+cat > "$PROJECT_DIR/.cursor/commands/wrapup.md" << 'EOF'
+# Wrapup（終了時の品質パック）
+
+## Description
+終了時に「再開しやすい状態」を作ります。
+
+- `git add -p` で差分を確定（レビュー/コミットしたい範囲だけステージ）
+- `endwork` を実行（`handoff full` + `handoff.md` だけcommit）
+
+## Prompt
+対象repoで `wrapup` を実行してください。
+
+```bash
+wrapup
+```
+
+チェックポイントを飛ばすなら:
+```bash
+wrapup --no-checkpoint
+```
+EOF
+
 # Create CLAUDE.md
 echo -e "${YELLOW}📝 Creating CLAUDE.md...${NC}"
 cat > "$PROJECT_DIR/CLAUDE.md" << EOF
@@ -234,6 +323,11 @@ cat > "$PROJECT_DIR/CLAUDE.md" << EOF
 ### Documentation
 - Keep design docs and specs in \`docs/\`.
 - Update \`README.md\` when behavior changes.
+
+### Handoff (resume SSOT)
+- SSOT is repo-root \`handoff.md\`.
+  - Switch / uncertainty: \`handoff quick\` (Next only)
+  - Session end: \`wrapup\` (recommended) / \`endwork\` (minimal; commits only \`handoff.md\`)
 
 ### Code Style
 - Follow existing patterns in the codebase.
@@ -267,6 +361,11 @@ cat > "$PROJECT_DIR/AGENTS.md" << EOF
 - Prefer small changes and confirm behavior frequently.
 - Do not add or commit secrets (API keys, tokens, passwords).
 - Ask for clarification if requirements are unclear.
+
+## Handoff (resume SSOT)
+- SSOT is repo-root \`handoff.md\`.
+  - Switch / uncertainty: \`handoff quick\` (Next only)
+  - Session end: \`wrapup\` (recommended) / \`endwork\` (minimal; commits only \`handoff.md\`)
 
 ## Repo Conventions
 
@@ -393,12 +492,17 @@ echo ""
 echo "📋 Created files:"
 echo "   - CLAUDE.md"
 echo "   - AGENTS.md"
+echo "   - handoff.md"
 echo "   - README.md"
 echo "   - .gitignore"
 echo "   - .vscode/tasks.json (local)"
 echo "   - .cursor/rules/ai-workflow.md"
 echo "   - .cursor/commands/codex-review.md"
 echo "   - .cursor/commands/git-checkpoint.md"
+echo "   - .cursor/commands/diff-review.md"
+echo "   - .cursor/commands/handoff.md"
+echo "   - .cursor/commands/endwork.md"
+echo "   - .cursor/commands/wrapup.md"
 echo "   - docs/"
 echo "   - samples/"
 echo "   - deliverables/"

@@ -24,8 +24,11 @@ Skillsは特定のキーワードで自動的に発動します。明示的な�
 | `input-processor` | 「Input整理」「メモ整理」「振り分け」 | Calendar/inboxの自動整理 |
 | `project-scaffold` | 「新規プロジェクト」「dev-init」 | 開発プロジェクト初期化 |
 | `changelog-watcher` | 「最新機能」「アップデート確認」 | Claude Code更新チェック |
-| `dev-handoff` | 「引き継ぎ」「handoff」「作業状況まとめ」 | 開発引き継ぎサマリ作成 |
+| `handoff` | 「handoff」「引き継ぎ」「ハンズオフ」「はんずおふ」「切替」 | repo直下 `handoff.md` の更新（quick/full/endwork） |
+| `dev-handoff` | 「dev-handoff」「作業状況まとめ」「開発引き継ぎサマリ」 | 開発引き継ぎサマリ作成（長め） |
 | `git-checkpoint` | 「差分固定」「チェックポイント」「git add -p」 | 差分を小さく固定 |
+| `diff-review` | 「差分レビュー」「diff-review」 | ステージ差分（`git diff --staged`）のレビュー |
+| `wrapup` | 「wrapup」「終了」「締め」 | 終了時の品質パック（`git add -p` → `endwork`） |
 | `ops-maintenance` | 「最新化」「運用更新」「公式確認」 | 公式確認→運用更新→ログ記録 |
 
 ### 使用例
@@ -43,8 +46,17 @@ Skillsは特定のキーワードで自動的に発動します。明示的な�
 # dev-handoff が自動発動
 「引き継ぎまとめて」
 
+# handoff が自動発動
+「handoffして」
+
 # git-checkpoint が自動発動
 「差分固定して」
+
+# diff-review が自動発動
+「差分レビューして」
+
+# wrapup が自動発動（終了時の品質パック）
+「wrapupして」
 
 # ops-maintenance が自動発動
 「運用を最新化して」
@@ -57,9 +69,15 @@ Skillsは特定のキーワードで自動的に発動します。明示的な�
 │   └── SKILL.md
 ├── project-scaffold/
 │   └── SKILL.md
+├── handoff/
+│   └── SKILL.md
 ├── dev-handoff/
 │   └── SKILL.md
 ├── git-checkpoint/
+│   └── SKILL.md
+├── diff-review/
+│   └── SKILL.md
+├── wrapup/
 │   └── SKILL.md
 ├── ops-maintenance/
 │   └── SKILL.md
@@ -69,13 +87,24 @@ Skillsは特定のキーワードで自動的に発動します。明示的な�
 
 ---
 
+## ツール別の発動（チャット欄の入口）
+
+- **Claude Code（CLI/Harness）**: トリガー語で自動発動（例: 「差分レビューして」「wrapupして」）。見つからない場合は `sync-claude-skills.sh` を実行。
+- **Codex（CLI）**: `~/.codex/skills/` に同期されていれば、同名のスキルとして扱える（※挙動はエージェント判断）。見つからない場合は `sync-codex-skills.sh` を実行。
+- **Cursor**:
+  - Nightly + Agent Skills有効（この環境の標準）: 同様にスキルが使える（Import Settings）。
+  - 安定版/無効時: `/wrapup` `/endwork` `/handoff` `/git-checkpoint` `/diff-review`（`.cursor/commands/` のラッパー）を使う。
+- **最終フォールバック（全ツール共通）**: ターミナルで `handoff` / `endwork` / `wrapup` を実行（実体はここに集約）。
+
+---
+
 ## Agent Skills（Skills中心運用）
 
 **運用方針**: SKILL.md形式を原本として管理し、ツール別に配布する。
 
 | ツール | 対応状況 | 配置場所 |
 |--------|----------|----------|
-| **Claude Code** | ✅ 対応 | `.claude/skills/` |
+| **Claude Code** | ✅ 対応 | `~/.claude/skills/`（推奨: `sync-claude-skills.sh`）。必要なら repo内 `.claude/skills/` でも可 |
 | **Codex CLI** | ✅ 対応（デフォルト有効） | `~/.codex/skills/` |
 | **Cursor** | ✅ 対応（Nightly / 要有効化） | Cursor Settings → Rules → Import Settings → Agent Skills |
 
@@ -84,6 +113,7 @@ Skillsは特定のキーワードで自動的に発動します。明示的な�
 - CursorはNightlyチャネルのみ対応（`Cmd+Shift+J` → Beta → Nightly、必要なら再起動）
 - スキルはエージェント判断で自動適用（常時/手動ルール化不可）
 - Cursor公式Docsでは有効化導線のみ明記（Import Settings）。共有ディレクトリの自動読込は明記されていない
+- このVaultはCursor Nightlyを前提に運用（`.cursor/commands/` は安定版フォールバックとして維持）
 
 ### 作成時の参照（必須）
 - ルールと公式参照: [[AgentSkills-運用案]]
@@ -93,12 +123,22 @@ Skillsは特定のキーワードで自動的に発動します。明示的な�
 ```
 原本: System/Skills/ (SKILL.md形式)
     ↓
-Claude Code: .claude/skills/ に配置
+Claude Code: sync-claude-skills.sh → ~/.claude/skills/
 Codex: sync-codex-skills.sh → ~/.codex/skills/
 Cursor: NightlyでAgent Skillsを有効化（Import Settings）
 Cursor（安定版/無効時）: .cursor/commands/ に変換
 ```
-- 備考: `skill-template`, `skill-creator` は同期対象外
+- 備考:
+  - `skill-template` は同期から除外するのが推奨（作成用テンプレ）
+- `skill-creator` は Codex同期では除外（作成用ツール）。Claude Codeでは必要なら同期してOK
+
+## tool-parity（運用保証）
+
+新しいSkill/コマンドを追加したら、ツール横断で「同名で呼べる」ことを必ず確認する。
+
+```bash
+bash ./System/Scripts/tool-parity-check.sh
+```
 
 ### 収録スキル
 - `git-checkpoint`（`git add -p` → `git diff --staged`）
@@ -193,16 +233,23 @@ Cursor（安定版/無効時）: .cursor/commands/ に変換
 - `System/Skills/` → `~/.codex/skills/` へ同期
 - CodexのSkillを最新化
 
-### 5. handoff-add.sh（引き継ぎ1行追記 / ツール非依存）
+### 5. handoff / endwork（再開SSOT: repoの handoff.md）
 
 ```bash
-cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/SecondBrain
-./System/Scripts/handoff-add.sh "<場所 or ファイル>" "<一言>"
+# 1) 初回だけインストール（~/.handoff/bin に配置）
+bash ./System/Scripts/install-handoff.sh
+
+# 2) 使い方（対象repoで実行）
+cd ~/Workspaces/projects/<repo>
+handoff            # デフォルト: quick（Nextだけ入力）
+endwork            # full + handoff.mdのみcommit（pushはしない）
 ```
 
 **用途:**
-- Codex拡張/CLI、外部ターミナル等で作業した後に、共通の作業状態（`引き継ぎ.md`）へ1行追記する
-- Cursorの `/handoff` を使いたくない/使えない場面の代替
+- ツール切替後に迷わず再開するための **再開SSOT** を残す
+- SSOTは **各repo直下の `handoff.md`**（ツール非依存）
+
+> 旧方式の `handoff-add.sh`（Vaultの引き継ぎ.md追記）は廃止しました（参照専用）。
 
 ---
 
@@ -229,7 +276,7 @@ Claude Code操作時に自動実行されるアクションです。Hooksはユ�
 
 | イベント | 動作 |
 |---------|------|
-| `SessionStart` | セッション開始ログ + ops-maintenance月次リマインド + 引き継ぎ24h通知 + SSOT（D/P/G）ダイジェスト表示 |
+| `SessionStart` | セッション開始ログ + ops-maintenance月次リマインド + SSOT（D/P/G）ダイジェスト表示 |
 | `PostToolUse` (Write/Edit) | ファイル変更をログ記録 |
 
 ### MEM（観測→昇格）の置き場（SSOT）
@@ -241,15 +288,15 @@ Claude Code操作時に自動実行されるアクションです。Hooksはユ�
 
 ### ツール間引き継ぎの仕組み
 
-全ツール共通で `System/Documentation/引き継ぎ.md` を参照することで、引き継ぎを実現:
+全ツール共通で「対象repo直下の `handoff.md`」をSSOTとし、ターミナルの共通コマンドで更新する。
 
 | ツール | 設定場所 | 確認タイミング |
 |--------|----------|----------------|
-| Claude Code | SessionStartフック | 24時間以内に更新があれば自動通知 |
-| Codex | AGENTS.md | セッション開始時に参照 |
-| Cursor | `.cursor/rules/session-start.md` | セッション開始時に参照 |
+| Claude Code | ルール/スキル | repo作業開始時に `handoff.md` を確認し、必要なら `handoff` / `endwork` |
+| Codex | AGENTS.md | 同上 |
+| Cursor | `.cursor/rules/session-start.md` | 同上（NightlyはAgent Skillsで補助） |
 
-**共通参照ファイル**: `System/Documentation/引き継ぎ.md`
+**共通SSOT**: `handoff.md`（各repo直下）
 
 ### Hook設定例
 

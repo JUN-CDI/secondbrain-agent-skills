@@ -1,0 +1,69 @@
+#!/bin/bash
+# endwork - end-of-session handoff + handoff.md-only commit (without touching current index)
+#
+# Behavior:
+# - Runs: handoff full (interactive, unless --next/--decision/--tried are provided)
+# - If inside a git repo: creates a commit that includes ONLY handoff.md, without disturbing
+#   the current staging/index state (uses an isolated index via GIT_INDEX_FILE).
+# - If outside git: only appends to ./handoff.md and exits.
+#
+# Usage:
+#   endwork
+#   endwork --next "tomorrow: run pytest -q" --decision "..." --tried "..."
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HANDOFF_CMD="${SCRIPT_DIR}/handoff"
+
+if [[ ! -f "$HANDOFF_CMD" ]]; then
+  echo "Error: handoff script not found next to endwork: $HANDOFF_CMD" >&2
+  exit 1
+fi
+
+# 1) Always append full handoff entry first
+bash "$HANDOFF_CMD" full "$@"
+
+# 2) If not in git repo, done
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${REPO_ROOT:-}" ]]; then
+  exit 0
+fi
+
+HANDOFF_REL="handoff.md"
+HANDOFF_FILE="${REPO_ROOT%/}/${HANDOFF_REL}"
+
+if [[ ! -f "$HANDOFF_FILE" ]]; then
+  echo "Error: expected handoff file not found: $HANDOFF_FILE" >&2
+  exit 1
+fi
+
+TMP_PARENT="${REPO_ROOT%/}/.handoff-tmp"
+mkdir -p "$TMP_PARENT"
+# Use repo-local temp to avoid sandbox/permission issues with system /tmp.
+TMP_DIR="$(mktemp -d "${TMP_PARENT}/index.XXXXXX" 2>/dev/null || true)"
+if [[ -z "${TMP_DIR:-}" ]]; then
+  TMP_DIR="${TMP_PARENT}/index.$$.$RANDOM"
+  mkdir -p "$TMP_DIR"
+fi
+TMP_INDEX="${TMP_DIR}/index"
+cleanup() { rm -rf "$TMP_DIR" >/dev/null 2>&1 || true; }
+trap cleanup EXIT
+
+# Build isolated index from HEAD, then stage only handoff.md into it.
+if git -C "$REPO_ROOT" rev-parse --verify HEAD >/dev/null 2>&1; then
+  GIT_INDEX_FILE="$TMP_INDEX" git -C "$REPO_ROOT" read-tree HEAD
+fi
+GIT_INDEX_FILE="$TMP_INDEX" git -C "$REPO_ROOT" add -- "$HANDOFF_REL"
+
+TS="$(date '+%Y-%m-%d %H:%M')"
+MSG="handoff: ${TS}"
+
+# Commit from the isolated index; allow empty if handoff.md did not change.
+GIT_INDEX_FILE="$TMP_INDEX" git -C "$REPO_ROOT" commit --allow-empty -m "$MSG"
+
+echo "OK: committed only $HANDOFF_REL (index preserved)"

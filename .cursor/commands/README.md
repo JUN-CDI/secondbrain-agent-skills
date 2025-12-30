@@ -2,6 +2,8 @@
 
 このフォルダには、Obsidian Vault管理用のCursor AIコマンドが含まれています。
 
+> 現行は **Cursor Nightly + Agent Skills** が主運用。ここは安定版/無効時のフォールバックとして維持します。
+
 ## 📖 使い方
 
 ### コマンドの実行方法
@@ -35,7 +37,22 @@
 **説明**: ローカル（`~/Workspaces/projects/`）に開発フォルダを作成（`System/Scripts/dev-init.sh` を実行）
 
 ### /handoff
-**説明**: 引き継ぎログを更新
+**説明**: 再開SSOT（repo直下 `handoff.md`）を更新する手順を案内（実体はターミナルの `handoff` / `endwork`）
+
+### /tool-parity
+**説明**: 新しいSkill/コマンドがツール横断で同名で呼べる状態かチェック（`tool-parity-check.sh`）
+
+### /wrapup
+**説明**: 終了時の品質パック（`git add -p` → `endwork`）。再開効果を最大化したい時に使う
+
+### /endwork
+**説明**: 終了（`handoff full` + `handoff.md` だけcommit）。stagingを汚さず再開SSOTだけ残す
+
+### /git-checkpoint
+**説明**: 差分固定（`git add -p` → `git diff --staged`）。レビュー対象を確定したい時に使う
+
+### /diff-review
+**説明**: ステージ差分レビュー（`git diff --staged` 前提）。P0/P1/P2で短く具体的にレビューする
 
 ---
 

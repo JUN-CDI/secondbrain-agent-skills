@@ -14,11 +14,12 @@ created: 2025-12-19
 
 | ツール | 対応状況 | 配置場所 |
 |--------|----------|----------|
-| **Claude Code** | ✅ 対応 | `.claude/skills/` |
+| **Claude Code** | ✅ 対応 | `~/.claude/skills/`（推奨: `sync-claude-skills.sh`）。必要なら repo内 `.claude/skills/` でも可 |
 | **Codex CLI** | ✅ 対応（デフォルト有効） | `~/.codex/skills/` |
 | **Cursor** | ✅ 対応（Nightly / 要有効化） | Cursor Settings → Rules → Import Settings → Agent Skills |
 
 > Codexは `skills = true` がデフォルト有効になったため、明示的な設定は不要。
+> このVaultは **Cursor Nightly + Agent Skills** を前提に運用（安定版フォールバックは維持）。
 
 ## 確認結果（agentskills/agentskills）
 - **仕様・ドキュメント・参照SDK**のみ（サンプルスキルは含まれない）
@@ -53,8 +54,9 @@ created: 2025-12-19
 
 ## 方針（この環境の最適解）
 1. **スキルの原本はVaultに置く**（編集しやすさ優先）
-2. **Codex用は `~/.codex/skills` に同期**
-3. **Cursor用はNightlyでAgent Skillsを有効化。安定版/無効時は `.cursor/commands/` に変換して配布**
+2. **Claude Code用は `~/.claude/skills` に同期**（起点をどこにしても同じSkillsが使える）
+3. **Codex用は `~/.codex/skills` に同期**
+4. **Cursor用はNightlyでAgent Skillsを有効化（このVaultの標準）。安定版/無効時は `.cursor/commands/` に変換して配布**
 
 ## 推奨ディレクトリ（Vault側の原本）
 ```
@@ -63,7 +65,15 @@ System/Skills/
 │   └── SKILL.md
 ├── diff-review/
 │   └── SKILL.md
-└── data-safety/
+├── data-safety/
+│   └── SKILL.md
+├── handoff/
+│   └── SKILL.md
+├── wrapup/
+│   └── SKILL.md
+├── tool-parity/
+│   └── SKILL.md
+└── endwork/
     └── SKILL.md
 └── skill-template/
     └── SKILL.md
@@ -78,13 +88,22 @@ System/Skills/
    - `git diff --staged` を前提にレビュー指示を出す
 3. **data-safety**
    - `samples/` / `deliverables/` / `*.csv` / `*.xlsx` をコミットしない
-4. **ops-maintenance**
+4. **handoff**
+   - repo直下の `handoff.md` を更新（quick/full、Nextだけ入力を基本）
+5. **endwork**
+   - セッション終端で `handoff full` + `handoff.md` のみcommit
+6. **wrapup**
+   - 終了時の品質パック: `git add -p`（差分確定）→ `endwork`
+7. **ops-maintenance**
    - 公式情報を確認して運用ドキュメント/テンプレを更新する
    - 記録先: `System/Documentation/運用更新ログ.md`
-5. **skill-creator**（公式）
+8. **skill-creator**（公式）
    - 新規スキル作成用ガイド（Anthropic公式）
    - `scripts/init_skill.py` で雛形生成
    - Codex同期対象外（作成用ツール）
+9. **tool-parity**
+   - ツール横断の入口一致（Claude/Codex/Cursor）をチェックする
+   - `bash ./System/Scripts/tool-parity-check.sh`
 
 ## Codexへの落とし方（同期）
 **選択肢A: 手動コピー（最小）**
@@ -92,15 +111,27 @@ System/Skills/
 cp -R System/Skills/git-checkpoint ~/.codex/skills/
 cp -R System/Skills/diff-review ~/.codex/skills/
 cp -R System/Skills/data-safety ~/.codex/skills/
+cp -R System/Skills/handoff ~/.codex/skills/
+cp -R System/Skills/wrapup ~/.codex/skills/
+cp -R System/Skills/endwork ~/.codex/skills/
 ```
 
 **選択肢B: 同期スクリプト**
 - `./System/Scripts/sync-codex-skills.sh` で同期（実装済み）
 - 変更時はこのスクリプトだけ回す
 
+## Claude Codeへの落とし方（同期）
+- 起点をどこにしても同じSkillsが使えるよう、`~/.claude/skills/` に同期する。
+
+```bash
+cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/SecondBrain
+bash ./System/Scripts/sync-claude-skills.sh
+```
+
 ## Cursorへの落とし方
 
 ### Nightly（Agent Skills）
+0. このVaultはNightly運用が標準（安定版はフォールバック）
 1. Cursor Settings（`Cmd+Shift+J`）→ Beta → 更新チャネルを Nightly に設定（必要なら再起動）
 2. Cursor Settings → Rules → Import Settings → Agent Skills をON
 3. スキルは `SKILL.md` 形式。リポジトリで管理し、GitHub リポジトリリンク経由で導入可能
@@ -127,4 +158,12 @@ Vault側の `SKILL.md` をベースに、以下の2コマンドを標準配布:
 ```
 skills-ref validate <skill-dir>
 skills-ref to-prompt <skill-dir>...
+```
+
+## 追加/変更時の“運用保証”（必須）
+新しいSkill/コマンドを作ったら、最後にこれで「全ツールで同名で呼べる」状態かチェックする:
+
+```bash
+cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/SecondBrain
+bash ./System/Scripts/tool-parity-check.sh
 ```

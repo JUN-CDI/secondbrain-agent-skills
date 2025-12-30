@@ -1,52 +1,34 @@
 #!/bin/bash
-# handoff-add.sh - System/Documentation/引き継ぎ.md に1行追記する（ツール非依存）
+# handoff-add.sh (DEPRECATED)
 #
-# 使い方:
-#   ./System/Scripts/handoff-add.sh "<変更ファイルパス|作業場所|メモ>" ["一言"]
+# This script used to append a one-line entry to the Vault-wide log:
+#   System/Documentation/引き継ぎ.md
 #
-# 例:
-#   ./System/Scripts/handoff-add.sh "~/Workspaces/projects/my-app" "Codexレビューを実施（指摘はdocs/HANDOFF.mdへ）"
-#   ./System/Scripts/handoff-add.sh "SecondBrain" "運用ドキュメント更新"
+# The handoff system has migrated to a per-repo SSOT:
+#   repo-root handoff.md
+# via tool-agnostic commands:
+#   handoff / endwork
 #
-# 目的:
-# - Cursorの /handoff を使わない場面（Codex拡張/CLI、外部ターミナル等）でも、
-#   共通の作業状態（引き継ぎ.md）を1分で更新できるようにする。
+# This legacy script is intentionally disabled to prevent double-logging.
 
 set -euo pipefail
 
-VAULT_DIR="$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain"
-LOG_FILE="$VAULT_DIR/System/Documentation/引き継ぎ.md"
-
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
-  sed -n '1,120p' "$0"
+  sed -n '1,140p' "$0"
   exit 0
 fi
 
-TARGET="${1:-}"
-NOTE="${2:-}"
+cat >&2 <<'EOF'
+This script is deprecated and disabled.
 
-if [[ -z "$TARGET" ]]; then
-  echo "Usage: $0 \"<path|place|note>\" [\"comment\"]" >&2
-  exit 2
-fi
+New handoff workflow:
+  - Switch / uncertainty: run `handoff quick` inside the target repo
+  - Session end: run `endwork` inside the target repo
 
-if [[ ! -f "$LOG_FILE" ]]; then
-  echo "Error: log file not found: $LOG_FILE" >&2
-  exit 1
-fi
+Examples:
+  cd ~/Workspaces/projects/<repo>
+  handoff quick --next "cd backend && pytest -q"
+  endwork
+EOF
 
-TODAY="$(date +%Y-%m-%d)"
-NOW="$(date +%H:%M)"
-
-# Ensure today's heading exists (current format uses '## YYYY-MM-DD')
-if ! grep -q "^## ${TODAY}\$" "$LOG_FILE" 2>/dev/null; then
-  printf "\n## %s\n\n" "$TODAY" >> "$LOG_FILE"
-fi
-
-LINE="- ${NOW} ${TARGET}"
-if [[ -n "$NOTE" ]]; then
-  LINE="${LINE} - ${NOTE}"
-fi
-
-echo "$LINE" >> "$LOG_FILE"
-echo "OK: appended to 引き継ぎ.md -> $LINE"
+exit 2

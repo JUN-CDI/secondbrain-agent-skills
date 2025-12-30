@@ -1,7 +1,9 @@
 # SecondBrain Rules（AI向け）
 
-> セッション開始時: `System/Documentation/引き継ぎ.md` を確認（直近の作業・運用変更）
-> セッション終了時: `System/Documentation/引き継ぎ.md` に変更ファイルを追記（Claude Codeは自動、Codex/Cursorは /handoff）
+> セッション開始時: 対象repo直下の `handoff.md` を確認（再開SSOT）
+> セッション終了時: 対象repoで `endwork`（`handoff.md` のみコミット）
+> 運用変更があった場合: `System/Documentation/運用更新ログ.md` の最新エントリを確認
+> 開発の起点（Harness/Cursor/Codex）は自由。ただし `handoff` / `endwork` は **対象repo内** で実行する（別repoの `handoff.md` を更新しないため）
 
 ## 1. 基本原則
 - 記録優先。迷ったら `Calendar/inbox/`
@@ -25,7 +27,7 @@ attachments/
 ### 外部ワークスペース（特化不要のデフォルト）
 - SecondBrain（iCloud Vault）配下以外は「外部」とみなし、原則読み取りのみ（書き込み/移動はユーザーが明示した場合のみ）
 - 外部フォルダはSecondBrainの振り分けフロー対象外。保存先に迷ったらVault内 `Calendar/inbox/`
-- 外部フォルダを操作した場合のみ、`引き継ぎ.md` にも併記（通常はVault内の変更だけ記録）
+- 外部フォルダは“SecondBrainの運用ログ”対象外（必要なら対象repoの `handoff.md` に記録）
 
 ## 3. 振り分け判定フロー
 ```
@@ -63,4 +65,5 @@ attachments/
 - 判定フローで保存先を決め、迷ったら `Calendar/inbox/`
 - 命名規則を厳守
 - 必要なら関連ノートへ1〜2件リンク
-- セッション終了時に `引き継ぎ.md` へ変更ファイルを追記
+- 新しいSkill/コマンドを追加した場合は `tool-parity`（`tool-parity-check.sh`）で入口整合を確認
+- セッション終了時は、作業しているrepoで `handoff` / `endwork` を使って `handoff.md` を更新

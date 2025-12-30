@@ -1,0 +1,373 @@
+#!/bin/bash
+# handoff - per-repo resume SSOT logger
+#
+# SSOT: repo-root handoff.md (or ./handoff.md when outside git)
+#
+# Usage:
+#   handoff                # interactive (default: quick)
+#   handoff quick --next "cd backend && pytest -q"
+#   handoff full --next "tomorrow: fix X" --decision "chose A over B" --tried "ran tests; X fails"
+#   handoff quick --fresh  # do not carry over Purpose/Now/Risk (prompt when interactive)
+#
+# Notes:
+# - One-line rule per slot (newlines are collapsed).
+# - Length limits are enforced (Next: 240 chars, others: 120 by default).
+
+set -euo pipefail
+
+TOOL_DEFAULT="${HANDOFF_TOOL:-terminal}"
+
+STATUS_MAX_LINES="${HANDOFF_STATUS_MAX_LINES:-20}"
+DIFFSTAT_MAX_LINES="${HANDOFF_DIFFSTAT_MAX_LINES:-20}"
+FILES_MAX="${HANDOFF_FILES_MAX:-20}"
+
+MAX_PURPOSE="${HANDOFF_MAX_PURPOSE:-120}"
+MAX_NOW="${HANDOFF_MAX_NOW:-120}"
+MAX_RISK="${HANDOFF_MAX_RISK:-120}"
+MAX_NEXT="${HANDOFF_MAX_NEXT:-240}"
+MAX_DECISION="${HANDOFF_MAX_DECISION:-160}"
+MAX_TRIED="${HANDOFF_MAX_TRIED:-160}"
+
+print_usage() {
+  cat <<'EOF'
+handoff - append a resume entry to repo-root handoff.md
+
+Usage:
+  handoff [quick|full] [options]
+  handoff                 # interactive dispatcher (default: quick)
+
+Modes:
+  quick  Minimal resume bookmark (Next required; others auto-filled/carry)
+  full   End-of-session record (quick + optional Decision/Tried)
+
+Options:
+  --next TEXT             Next (required): first concrete action after resume
+  --purpose TEXT          Purpose (one line)
+  --now TEXT              Now (one line)
+  --risk TEXT             Risk (one line)
+  --decision TEXT         Decision (full only, optional)
+  --tried TEXT            Tried/Result (full only, optional)
+  --tool TEXT             Tool label (default: terminal)
+  --fresh, --reset        Do not carry over; use placeholders and prompt (if interactive)
+  --status-lines N        Truncate git status to N lines (default: 20)
+  --diffstat-lines N      Truncate git diff --stat to N lines (default: 20)
+  --files-max N           Max changed files to list (default: 20)
+  -h, --help              Show help
+
+Environment overrides:
+  HANDOFF_TOOL, HANDOFF_STATUS_MAX_LINES, HANDOFF_DIFFSTAT_MAX_LINES, HANDOFF_FILES_MAX
+  HANDOFF_MAX_PURPOSE, HANDOFF_MAX_NOW, HANDOFF_MAX_RISK, HANDOFF_MAX_NEXT, HANDOFF_MAX_DECISION, HANDOFF_MAX_TRIED
+EOF
+}
+
+die() {
+  echo "Error: $*" >&2
+  exit 1
+}
+
+is_tty() {
+  [[ -t 0 ]]
+}
+
+sanitize_one_line() {
+  # Collapse newlines/tabs into spaces, trim, compress spaces.
+  # Usage: sanitize_one_line "<text>" "<max_chars>"
+  local s="${1:-}"
+  local max="${2:-120}"
+  s="$(printf '%s' "$s" | tr '\r\n\t' '   ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+  # truncate by chars (byte-based; acceptable for our mostly-ASCII slots)
+  if [[ -n "$s" ]]; then
+    s="$(printf '%s' "$s" | cut -c "1-${max}")"
+  fi
+  printf '%s' "$s"
+}
+
+extract_last_slot() {
+  # Extract last occurrence of "- <Label>: <value>" (exact prefix at line start)
+  local file="$1"
+  local label="$2"
+  [[ -f "$file" ]] || return 0
+  awk -v label="$label" '
+    BEGIN { prefix = "- " label ": " }
+    index($0, prefix) == 1 {
+      print substr($0, length(prefix) + 1)
+    }
+  ' "$file" | tail -n 1
+}
+
+strip_carry_prefix() {
+  # Remove "(carry) " if present at the beginning.
+  local s="${1:-}"
+  printf '%s' "$s" | sed -E 's/^\\(carry\\)[[:space:]]+//'
+}
+
+ensure_handoff_file() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    return 0
+  fi
+  cat > "$file" <<'EOF'
+# Handoff (resume SSOT)
+
+This file is the single source of truth for resuming work in this repo.
+
+- Switch / uncertainty: run `handoff quick`
+- Session end: run `endwork`
+
+EOF
+}
+
+current_git_branch() {
+  local repo_root="$1"
+  local b=""
+  b="$(git -C "$repo_root" branch --show-current 2>/dev/null || true)"
+  if [[ -z "$b" ]]; then
+    b="$(git -C "$repo_root" rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+  fi
+  printf '%s' "$b"
+}
+
+prompt_optional() {
+  # prompt_optional "<label>" "<placeholder>" -> prints value or placeholder if empty
+  local label="$1"
+  local placeholder="$2"
+  local v=""
+  if is_tty; then
+    read -r -p "${label} [${placeholder}]: " v || true
+  fi
+  if [[ -z "${v// }" ]]; then
+    printf '%s' "$placeholder"
+  else
+    printf '%s' "$v"
+  fi
+}
+
+MODE=""
+TOOL="$TOOL_DEFAULT"
+FORCE_FRESH=0
+
+NEXT=""
+PURPOSE=""
+NOW=""
+RISK=""
+DECISION=""
+TRIED=""
+
+if [[ $# -gt 0 && ( "${1:-}" == "quick" || "${1:-}" == "full" ) ]]; then
+  MODE="$1"
+  shift
+fi
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --next)
+      NEXT="${2:-}"; shift 2 ;;
+    --purpose|--p)
+      PURPOSE="${2:-}"; shift 2 ;;
+    --now|--n)
+      NOW="${2:-}"; shift 2 ;;
+    --risk|--r)
+      RISK="${2:-}"; shift 2 ;;
+    --decision|--d)
+      DECISION="${2:-}"; shift 2 ;;
+    --tried|--t)
+      TRIED="${2:-}"; shift 2 ;;
+    --tool)
+      TOOL="${2:-}"; shift 2 ;;
+    --fresh|--reset)
+      FORCE_FRESH=1; shift ;;
+    --status-lines)
+      STATUS_MAX_LINES="${2:-}"; shift 2 ;;
+    --diffstat-lines)
+      DIFFSTAT_MAX_LINES="${2:-}"; shift 2 ;;
+    --files-max)
+      FILES_MAX="${2:-}"; shift 2 ;;
+    -h|--help)
+      print_usage; exit 0 ;;
+    *)
+      die "Unknown option: $1" ;;
+  esac
+done
+
+if [[ -z "$MODE" ]]; then
+  if is_tty; then
+    read -r -p "Mode? [quick/full] (default: quick): " MODE || true
+    MODE="$(sanitize_one_line "$MODE" 16)"
+    [[ -z "$MODE" ]] && MODE="quick"
+  else
+    MODE="quick"
+  fi
+fi
+
+if [[ "$MODE" != "quick" && "$MODE" != "full" ]]; then
+  die "Invalid mode: $MODE (expected quick or full)"
+fi
+
+# Detect git repo (optional)
+REPO_ROOT=""
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+fi
+
+TARGET_DIR="${REPO_ROOT:-$PWD}"
+HANDOFF_FILE="${TARGET_DIR%/}/handoff.md"
+
+ensure_handoff_file "$HANDOFF_FILE"
+
+LAST_PURPOSE="$(extract_last_slot "$HANDOFF_FILE" "Purpose" || true)"
+LAST_NOW="$(extract_last_slot "$HANDOFF_FILE" "Now" || true)"
+LAST_RISK="$(extract_last_slot "$HANDOFF_FILE" "Risk" || true)"
+LAST_BRANCH="$(extract_last_slot "$HANDOFF_FILE" "GitBranch" || true)"
+
+LAST_PURPOSE="$(strip_carry_prefix "$LAST_PURPOSE")"
+LAST_NOW="$(strip_carry_prefix "$LAST_NOW")"
+LAST_RISK="$(strip_carry_prefix "$LAST_RISK")"
+
+CUR_BRANCH=""
+if [[ -n "$REPO_ROOT" ]]; then
+  CUR_BRANCH="$(current_git_branch "$REPO_ROOT")"
+fi
+
+BRANCH_CHANGED=0
+if [[ -n "$REPO_ROOT" && -n "${LAST_BRANCH:-}" && -n "${CUR_BRANCH:-}" && "$LAST_BRANCH" != "$CUR_BRANCH" ]]; then
+  BRANCH_CHANGED=1
+fi
+
+# Quick: Next is required (full includes quick fields, so Next is also required).
+if [[ -z "${NEXT// }" ]]; then
+  if is_tty; then
+    read -r -p "Next (required, one line): " NEXT || true
+  fi
+fi
+NEXT="$(sanitize_one_line "$NEXT" "$MAX_NEXT")"
+if [[ -z "${NEXT// }" ]]; then
+  die "Next is required. Provide --next \"...\" or run interactively."
+fi
+
+PURPOSE="$(sanitize_one_line "$PURPOSE" "$MAX_PURPOSE")"
+NOW="$(sanitize_one_line "$NOW" "$MAX_NOW")"
+RISK="$(sanitize_one_line "$RISK" "$MAX_RISK")"
+
+AUTO_MODE_REASON=""
+if [[ "$FORCE_FRESH" -eq 1 ]]; then
+  AUTO_MODE_REASON="fresh"
+elif [[ "$BRANCH_CHANGED" -eq 1 ]]; then
+  AUTO_MODE_REASON="branch_changed"
+fi
+
+# Auto-fill / carry rules (Purpose/Now/Risk)
+if [[ -z "$PURPOSE" ]]; then
+  if [[ -z "$AUTO_MODE_REASON" && -n "${LAST_PURPOSE// }" ]]; then
+    PURPOSE="(carry) $(sanitize_one_line "$LAST_PURPOSE" "$MAX_PURPOSE")"
+  else
+    local_placeholder="TBD"
+    if is_tty && [[ -n "$AUTO_MODE_REASON" ]]; then
+      PURPOSE="$(prompt_optional "Purpose" "$local_placeholder")"
+      PURPOSE="$(sanitize_one_line "$PURPOSE" "$MAX_PURPOSE")"
+    else
+      PURPOSE="$(sanitize_one_line "$local_placeholder" "$MAX_PURPOSE")"
+    fi
+  fi
+fi
+
+if [[ -z "$NOW" ]]; then
+  if [[ -z "$AUTO_MODE_REASON" && -n "${LAST_NOW// }" ]]; then
+    NOW="(carry) $(sanitize_one_line "$LAST_NOW" "$MAX_NOW")"
+  else
+    local_placeholder="WIP"
+    if is_tty && [[ -n "$AUTO_MODE_REASON" ]]; then
+      NOW="$(prompt_optional "Now" "$local_placeholder")"
+      NOW="$(sanitize_one_line "$NOW" "$MAX_NOW")"
+    else
+      NOW="$(sanitize_one_line "$local_placeholder" "$MAX_NOW")"
+    fi
+  fi
+fi
+
+if [[ -z "$RISK" ]]; then
+  if [[ -z "$AUTO_MODE_REASON" && -n "${LAST_RISK// }" ]]; then
+    RISK="(carry) $(sanitize_one_line "$LAST_RISK" "$MAX_RISK")"
+  else
+    local_placeholder="none/unknown"
+    if is_tty && [[ -n "$AUTO_MODE_REASON" ]]; then
+      RISK="$(prompt_optional "Risk" "$local_placeholder")"
+      RISK="$(sanitize_one_line "$RISK" "$MAX_RISK")"
+    else
+      RISK="$(sanitize_one_line "$local_placeholder" "$MAX_RISK")"
+    fi
+  fi
+fi
+
+DECISION="$(sanitize_one_line "$DECISION" "$MAX_DECISION")"
+TRIED="$(sanitize_one_line "$TRIED" "$MAX_TRIED")"
+
+if [[ "$MODE" == "full" ]]; then
+  if is_tty; then
+    if [[ -z "$DECISION" ]]; then
+      read -r -p "Decision (optional, one line): " DECISION || true
+      DECISION="$(sanitize_one_line "$DECISION" "$MAX_DECISION")"
+    fi
+    if [[ -z "$TRIED" ]]; then
+      read -r -p "Tried/Result (optional, one line): " TRIED || true
+      TRIED="$(sanitize_one_line "$TRIED" "$MAX_TRIED")"
+    fi
+  fi
+fi
+
+if [[ "$BRANCH_CHANGED" -eq 1 ]]; then
+  echo "Note: branch changed (${LAST_BRANCH} -> ${CUR_BRANCH}); Purpose/Now/Risk were not carried. Use --fresh to re-enter explicitly." >&2
+fi
+
+TS="$(date '+%Y-%m-%d %H:%M')"
+
+{
+  printf "\n### %s - Tool: %s - Mode: %s\n\n" "$TS" "$TOOL" "$MODE"
+  printf -- "- Purpose: %s\n" "$PURPOSE"
+  printf -- "- Now: %s\n" "$NOW"
+  printf -- "- Next: %s\n" "$NEXT"
+  printf -- "- Risk: %s\n" "$RISK"
+  if [[ "$MODE" == "full" ]]; then
+    if [[ -n "${DECISION// }" ]]; then
+      printf -- "- Decision: %s\n" "$DECISION"
+    fi
+    if [[ -n "${TRIED// }" ]]; then
+      printf -- "- Tried/Result: %s\n" "$TRIED"
+    fi
+  fi
+
+  if [[ -n "$REPO_ROOT" ]]; then
+    printf "\n#### Auto (git)\n"
+    printf -- "- Repo: %s\n" "$REPO_ROOT"
+    printf -- "- GitBranch: %s\n" "$CUR_BRANCH"
+
+    printf -- "- GitStatus (top %s lines):\n" "$STATUS_MAX_LINES"
+    printf '%s\n' '```text'
+    git -C "$REPO_ROOT" status -sb 2>/dev/null | head -n "$STATUS_MAX_LINES" || true
+    printf '%s\n' '```'
+
+    printf -- "- GitDiffStat (unstaged, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
+    printf '%s\n' '```text'
+    git -C "$REPO_ROOT" diff --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true
+    printf '%s\n' '```'
+
+    printf -- "- GitDiffStat (staged, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
+    printf '%s\n' '```text'
+    git -C "$REPO_ROOT" diff --staged --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true
+    printf '%s\n' '```'
+
+    printf -- "- ChangedFiles (top %s):\n" "$FILES_MAX"
+    changed_files="$(git -C "$REPO_ROOT" diff --name-only HEAD 2>/dev/null || true)"
+    if [[ -z "${changed_files// }" ]]; then
+      printf "  - (none)\n"
+    else
+      count_total="$(printf '%s\n' "$changed_files" | sed '/^$/d' | awk 'END{print NR}')"
+      printf '%s\n' "$changed_files" | sed '/^$/d' | head -n "$FILES_MAX" | sed 's/^/  - /'
+      if [[ "$count_total" -gt "$FILES_MAX" ]]; then
+        printf "  - ... (+%s more)\n" "$((count_total - FILES_MAX))"
+      fi
+    fi
+  fi
+} >> "$HANDOFF_FILE"
+
+echo "OK: appended to $HANDOFF_FILE"
+

@@ -72,7 +72,7 @@ bootstrap_from_codex() {
   mkdir -p "$SRC_DIR"
 
   local copied=0
-  for skill in data-safety diff-review git-checkpoint ops-maintenance; do
+  for skill in data-safety diff-review git-checkpoint handoff endwork wrapup ops-maintenance tool-parity; do
     if [[ -d "$DST_DIR/$skill" ]]; then
       mkdir -p "$SRC_DIR/$skill"
       rsync -a "$DST_DIR/$skill/" "$SRC_DIR/$skill/"

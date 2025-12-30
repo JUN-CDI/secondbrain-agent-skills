@@ -1,6 +1,6 @@
 ---
 name: dev-handoff
-description: Create a concise development handoff summary. Use when user mentions "引き継ぎ", "handoff", "作業状況まとめ", or "引き渡し".
+description: Create a concise development handoff summary. Use when user asks for "dev-handoff" or "作業状況まとめ" (development handoff summary).
 allowed-tools: Read, Write, Bash(git:*)
 ---
 
@@ -15,7 +15,7 @@ Ask if missing:
 - Repo path
 - Branch name
 - Whether to stage changes (`git add -p`) or keep as-is
- - Whether to append to the shared Vault handoff log (`System/Documentation/引き継ぎ.md`)
+ - Whether to update the repo resume SSOT (`handoff.md`) before switching tools (recommended: `handoff quick`)
 
 ### Step 2: Collect status
 Run the minimum commands:
@@ -78,4 +78,4 @@ Ask the user to paste:
 - `git status -sb`
 - `git diff --staged --stat`
 - the handoff summary above
- - If working across tools: add a short entry to `System/Documentation/引き継ぎ.md` (`- HH:MM <path> - <note>`)
+ - If switching tools: ensure `handoff.md` is updated (recommended: `handoff quick`), and at session end run `endwork` (commits only `handoff.md`)

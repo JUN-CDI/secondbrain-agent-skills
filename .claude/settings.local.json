@@ -1,6 +1,9 @@
 {
   "permissions": {
     "allow": [
+      "Edit(/Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/**)",
+      "Edit(/Users/donaichu/Workspaces/**)",
+      "Edit(/Users/donaichu/Library/CloudStorage/OneDrive-個人用/Finals/**)",
       "Bash(tree:*)",
       "Bash(du:*)",
       "Bash(rm:*)",
@@ -32,7 +35,41 @@
       "Bash(claude:*)",
       "Bash(xattr:*)",
       "Bash(chflags nohidden:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "WebSearch",
+      "Bash(git init:*)",
+      "Bash(source venv/bin/activate)",
+      "Bash(streamlit run:*)",
+      "Bash(pkill:*)",
+      "Skill(claude-code-harness:optional:cleanup)",
+      "Bash(cd:*)",
+      "Bash(node:*)",
+      "Bash(docker --version:*)",
+      "Bash(python3 -m venv:*)",
+      "Bash(source .venv/bin/activate)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(curl:*)",
+      "Bash(open -a Docker:*)",
+      "Bash(python3:*)",
+      "Bash(brew install:*)",
+      "Bash(brew list:*)",
+      "Bash(hdiutil attach:*)",
+      "Bash(hdiutil detach:*)",
+      "Bash(open:*)",
+      "Bash(/Applications/Docker.app/Contents/Resources/bin/docker --version)",
+      "Bash(/Applications/Docker.app/Contents/Resources/bin/docker info:*)",
+      "Bash(echo:*)",
+      "Bash(export PATH=\"/Applications/Docker.app/Contents/Resources/bin:$PATH\")",
+      "Bash(docker compose:*)",
+      "Bash(alembic revision:*)",
+      "Bash(alembic upgrade:*)",
+      "Bash(npm install)",
+      "Bash(grep:*)",
+      "Bash(for file in app/models/*.py)",
+      "Bash(do sed -i '' 's/from app\\\\.db\\\\.base import Base/from app.db.base_class import Base/g' \"$file\")",
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Bash(pip show:*)"
     ]
   },
   "hooks": {
@@ -49,10 +86,6 @@
           },
           {
             "type": "command",
-            "command": "log_file=\"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Documentation/引き継ぎ.md\"; if [ -f \"$log_file\" ]; then mod_time=$(stat -f %m \"$log_file\"); now=$(date +%s); diff=$((now - mod_time)); if [ $diff -lt 86400 ]; then echo \"📋 引き継ぎ.md が24時間以内に更新されています。確認してください。\"; fi; fi"
-          },
-          {
-            "type": "command",
             "command": "bash \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Scripts/session-init-mem.sh\" 2>/dev/null || true"
           }
         ]
@@ -65,10 +98,6 @@
           {
             "type": "command",
             "command": "jq -r '.tool_input.file_path // empty' | { read f; [ -n \"$f\" ] && echo \"$(date +%Y-%m-%d\\ %H:%M:%S) Modified: $f\" >> ~/.claude/file-changes.log || true; }"
-          },
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.file_path // empty' | { read f; log=\"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Documentation/引き継ぎ.md\"; today=$(date +%Y-%m-%d); if [ -n \"$f\" ] && ! echo \"$f\" | grep -q '引き継ぎ'; then if ! grep -q \"^## $today$\" \"$log\" 2>/dev/null; then printf \"\\n## %s\\n\\n\" \"$today\" >> \"$log\" 2>/dev/null || true; fi; echo \"- $(date +%H:%M) $f\" >> \"$log\" 2>/dev/null || true; fi; }"
           },
           {
             "type": "command",

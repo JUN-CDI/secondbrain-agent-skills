@@ -28,7 +28,7 @@
 ## ✅ 完了
 1. Vault: `Efforts/<project>/` → `Efforts/archived/<project>/`
 2. 成果物: `Finals(OneDrive)` に正本を保存し、Vault側は「リンク/注記」だけ残す（再利用できる手順は `Atlas/`）
-3. 引き継ぎ: Repo側 `docs/HANDOFF.md` と、必要なら `System/Documentation/引き継ぎ.md` に追記
+3. 引き継ぎ: repo直下 `handoff.md` を正にする（終了時は `wrapup`（推奨）/ `endwork`（最小））。`docs/HANDOFF.md` は任意の補助（長文用）。
 
 ---
 

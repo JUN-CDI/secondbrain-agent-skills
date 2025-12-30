@@ -1,28 +1,35 @@
-# 引き継ぎログ更新
+# Handoff（再開SSOTの更新）
 
 ## Description
-Claude Code / Codex / Cursor の引き継ぎを揃えるため、`System/Documentation/引き継ぎ.md` に手動追記します。
+ツール切替後に迷わず再開できるよう、**対象リポジトリ直下の `handoff.md`** を更新します。
+
+正規の入口はターミナルの共通コマンドです：
+- `handoff`（quick/full）
+- `endwork`（full + `handoff.md` だけコミット）
+
+> 旧方式（Vaultの `System/Documentation/引き継ぎ.md` への追記）は廃止しました。
 
 ## Prompt
-次を実行してください。
+次を実行してください（最短）。
 
-1) `System/Documentation/引き継ぎ.md` を開く
-2) 今日の日付（YYYY-MM-DD）の見出しがなければ追加
-3) 追記フォーマット:
-   - `- HH:MM <変更ファイルパス> - <一言>`
-   - 一言は任意（無ければ省略）
-4) 変更が多い場合は3〜10件に要約
-5) 追記のきっかけ（迷ったらここ）:
-   - ツール/作業場所を切り替える前（Cursor ↔ Claude Code ↔ Codex）
-   - 30分以上中断する前
-   - PR/コミットの区切りを付けた直後
-   - 「次やること」が1つに固まった時（次アクションを書いておく）
-5) 追記後に「完了」と伝える
+1) 対象repoのルートで、ターミナルから `handoff` を実行（デフォルトはquick）
+2) quickの場合、入力は基本 **Nextだけ**
+   - Next = 「再開した瞬間に最初にやる1アクション（具体的なコマンド/ファイル/確認点）」
+   - 例: `cd backend && pytest -q` / `app.py を開いて例外処理だけ直す`
+3) その日の終わりは `endwork`（`handoff.md` だけをcommitする）
 
-## メモ（Cursorを使わない場合）
-ターミナルから1行追記するなら、これでもOKです：
+実行のきっかけ（迷ったらここ）:
+- ツール/作業場所を切り替える前（Cursor ↔ Claude Code ↔ Codex）
+- 30分以上中断する前
+- PR/コミットの区切り直後
+- 「次の一手」が固まった時
+
+## メモ（コマンド例）
 
 ```bash
-cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/SecondBrain
-./System/Scripts/handoff-add.sh "<場所 or ファイル>" "<一言>"
+# quick（切替用）
+handoff quick --next "cd backend && pytest -q"
+
+# full + handoff.mdのみcommit（終了用）
+endwork
 ```

@@ -29,31 +29,40 @@ created: 2025-12-22
 
 ## 最短ループ（推奨ワークフロー）
 
+覚えるのはこれだけ（最小）:
+- **切替/中断**: `handoff quick`（Nextだけ）
+- **終了（最小）**: `endwork`（`handoff.md` だけcommit）
+- **終了（推奨・品質）**: `wrapup`（`git add -p` → `endwork`）
+
 ### 1) 実装（Claude Code）
-- Repo直下で `claude` を起動
+- **起点はどこでもOK**（Vault直下のHarnessから開始してもよい）。ただし、実装対象の **repo内** で作業すること。
+- Repo直下（またはrepo配下の任意ディレクトリ）で `claude` を起動
 - ルールは **Repoの `CLAUDE.md`** を正本にする
 
+> メモ: `handoff` / `endwork` は「今いるrepo」を対象に `handoff.md` を更新します。迷ったら `git rev-parse --show-toplevel` で対象repoを確認してから実行してください。
+
 ### 2) 差分固定（Git）
-- `git add -p` → `git diff --staged`
+- `git-checkpoint`（Skill）または `git add -p` → `git diff --staged`（任意・品質）
 
 ### 3) レビュー/提案（Codex）
-- Codex（CLI/拡張）でレビュー
+- Codex（CLI/拡張）でレビュー（または `diff-review`（Skill）でステージ差分をレビュー）（任意・品質）
 - 指摘の要点は `docs/HANDOFF.md`（またはコミット前メモ）へ
 
 ### 4) 引き継ぎ（ツール横断の状態共有）
-共通の作業状態は **Vaultの `System/Documentation/引き継ぎ.md`** に集約します。
+ツール横断の再開SSOTは、**対象repo直下の `handoff.md`** に統一します。
 
-- Claude Code: Hooksでファイル変更が自動追記される（`.claude/settings.local.json`）
-- Codex/拡張/外部ターミナル: `handoff-add.sh` で1行追記（Cursor AIを使わずに済む）
+- 切替直前/不安時: `handoff quick`（Nextだけ入力すればOK）
+- その日の終わり: `endwork`（`handoff full` + `handoff.md` のみcommit）
 
 ```bash
-cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/SecondBrain
-./System/Scripts/handoff-add.sh "~/Workspaces/projects/<repo>" "Codexレビュー完了（指摘はdocs/HANDOFF.mdへ）"
+cd ~/Workspaces/projects/<repo>
+handoff quick --next "cd backend && pytest -q"
+endwork
 ```
 
 補足:
 - Harness（Claude CLI）も **引き継ぎは必要**。同一ツール内で完結する前提はない
-- 他ツールへ渡す場合は `handoff-add.sh` を最優先（ツール非依存で確実）
+- 他ツールへ渡す場合も、同じ `handoff` / `endwork` を使う（ターミナルの共通コマンド）
 
 ---
 
@@ -72,4 +81,4 @@ cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/SecondBrain
 - **開発Repoのレビュー観点**: Repoの `AGENTS.md`（Codex向け）
 - **Skillsの原本**: Vaultの `System/Skills/`
   - Codexへ同期: `./System/Scripts/sync-codex-skills.sh` → `~/.codex/skills/`
-- **ツール横断の作業状態**: Vaultの `System/Documentation/引き継ぎ.md`
+- **ツール横断の作業状態（再開SSOT）**: 各repo直下の `handoff.md`

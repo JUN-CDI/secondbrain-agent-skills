@@ -1,13 +1,11 @@
 # Session Start Rules
 
-**セッション開始時**: `System/Documentation/引き継ぎ.md` を確認
+**セッション開始時**:
 
-- 直近の作業（変更ファイル一覧）
-- 運用変更（重要なもの）
-- 作業ログは廃止し、直近の作業は `System/Documentation/引き継ぎ.md` に集約
-- 作業終了時: `System/Documentation/引き継ぎ.md` に追記（/handoff を使用）
+- 対象repoを開いたら、まず repo直下の `handoff.md` を確認（再開SSOT）
+- ツール切替/不安時は `handoff quick`、終わるときは `endwork`
 
-これにより、Claude Code / Codex / Cursor 間で作業状態を共有できます。
+> 旧方式（Vaultの `System/Documentation/引き継ぎ.md`）は廃止しました。
 
 ## MEM（観測→昇格）運用（SSOT）
 

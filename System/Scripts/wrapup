@@ -1,0 +1,135 @@
+#!/bin/bash
+# wrapup - end-of-session "quality pack" + endwork
+#
+# Goal (maximize resume effectiveness):
+# - Prepare a clean staged diff for review (git add -p), without forcing a code commit.
+# - Then run `endwork` to append a full handoff entry and commit ONLY handoff.md (index preserved).
+#
+# Usage:
+#   wrapup
+#   wrapup --no-checkpoint
+#   wrapup --next "tomorrow: run diff-review on staged diff"
+#
+# Notes:
+# - `git add -p` is interactive; if no TTY is available, checkpoint is skipped.
+# - wrapup does NOT commit code changes. (Use normal `git commit` after staging if desired.)
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENDWORK_CMD="${SCRIPT_DIR}/endwork"
+
+if [[ ! -f "$ENDWORK_CMD" ]]; then
+  echo "Error: endwork script not found next to wrapup: $ENDWORK_CMD" >&2
+  exit 1
+fi
+
+print_usage() {
+  cat <<'EOF'
+wrapup - end-of-session helper (checkpoint + endwork)
+
+Usage:
+  wrapup [options forwarded to handoff/endwork]
+
+Wrapup options:
+  --no-checkpoint      Skip `git add -p`
+  -h, --help           Show help
+
+Handoff/endwork options (forwarded):
+  --next TEXT          Next (required by handoff; will prompt if omitted)
+  --purpose TEXT       Purpose (optional)
+  --now TEXT           Now (optional)
+  --risk TEXT          Risk (optional)
+  --decision TEXT      Decision (optional)
+  --tried TEXT         Tried/Result (optional)
+  --fresh, --reset     Do not carry over fields
+  --tool TEXT          Tool label (default: wrapup)
+EOF
+}
+
+CHECKPOINT=1
+TOOL_SET=0
+
+PASS_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      print_usage
+      exit 0
+      ;;
+    --no-checkpoint)
+      CHECKPOINT=0
+      shift
+      ;;
+    --tool)
+      TOOL_SET=1
+      PASS_ARGS+=(--tool "${2:-}")
+      shift 2
+      ;;
+    --fresh|--reset)
+      PASS_ARGS+=("$1")
+      shift
+      ;;
+    --next|--purpose|--now|--risk|--decision|--tried|--status-lines|--diffstat-lines|--files-max)
+      PASS_ARGS+=("$1" "${2:-}")
+      shift 2
+      ;;
+    --)
+      shift
+      PASS_ARGS+=("$@")
+      break
+      ;;
+    *)
+      # Forward unknown args to endwork/handoff (future-proof)
+      PASS_ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ "$TOOL_SET" -ne 1 ]]; then
+  PASS_ARGS+=(--tool "wrapup")
+fi
+
+# If not inside git, just fall back to endwork (handoff works outside git too).
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Note: not inside a git repo. Skipping checkpoint; running endwork only." >&2
+  bash "$ENDWORK_CMD" "${PASS_ARGS[@]}"
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${REPO_ROOT:-}" ]]; then
+  echo "Note: could not determine repo root. Running endwork only." >&2
+  bash "$ENDWORK_CMD" "${PASS_ARGS[@]}"
+  exit 0
+fi
+
+cd "$REPO_ROOT"
+
+if [[ "$CHECKPOINT" -eq 1 ]]; then
+  if [[ -t 0 ]]; then
+    echo "== wrapup: checkpoint (git add -p) ==" >&2
+    git add -p || true
+  else
+    echo "Note: no TTY detected; skipping `git add -p`. Re-run interactively or use --no-checkpoint." >&2
+  fi
+fi
+
+echo "== wrapup: git status (short) ==" >&2
+git status -sb >&2 || true
+
+echo "== wrapup: staged diffstat ==" >&2
+git diff --staged --stat >&2 || true
+
+echo "== wrapup: unstaged diffstat ==" >&2
+git diff --stat >&2 || true
+
+echo "" >&2
+echo "Tip: if you want a quick review, run diff-review on the staged diff (git diff --staged)." >&2
+echo "" >&2
+
+echo "== wrapup: endwork (handoff full + commit only handoff.md) ==" >&2
+bash "$ENDWORK_CMD" "${PASS_ARGS[@]}"
+

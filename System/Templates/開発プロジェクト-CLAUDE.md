@@ -28,8 +28,11 @@
 - Use sample data from `samples/` for testing (excluded from Git by default).
 
 ### Handoff
-- When handing off work, use `System/Documentation/引き継ぎ-開発作業.md`.
-- Provide `git status -sb`, `git diff --staged --stat`, and the handoff summary.
+- Resume SSOT is repo-root `handoff.md`:
+  - Switch / uncertainty: `handoff quick`
+  - Session end: `endwork` (commits only `handoff.md`)
+- For longer-form handoff notes, use `System/Documentation/引き継ぎ-開発作業.md`.
+- Provide `git status -sb`, `git diff --staged --stat`, and the handoff summary when needed.
 
 ## Folder Structure
 ```
