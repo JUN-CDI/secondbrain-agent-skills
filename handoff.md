@@ -360,3 +360,30 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+### 2025-12-30 11:56 - Tool: codex - Mode: full
+
+- Purpose: handoff Next文言の不整合防止
+- Now: handoff検証ロジックとendworkガイドの更新・commit/push済み
+- Next: 必要なら System/Documentation/運用フロー分析-統合.md に学習例を追記
+- Risk: なし
+- Decision: Nextの不完全パターン検知を追加
+- Tried/Result: handoff/endworkガイドとスクリプトを更新
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
