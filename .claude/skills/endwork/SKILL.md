@@ -11,10 +11,10 @@ allowed-tools: Read, Bash(git:*)
 ## Instructions
 1. 対象repoのルートで `endwork` を実行するよう案内する。
 2. `endwork` が無い場合は、先に `install-handoff.sh` を実行してPATHに入れるよう案内する。
+3. `endwork` 自体は push しないため、`push済み` と書くのは `git push` 成功後のみであることを伝える。
 
 ## 例
 ```bash
 cd ~/Workspaces/projects/<repo>
 endwork
 ```
-

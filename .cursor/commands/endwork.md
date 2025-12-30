@@ -5,6 +5,7 @@
 
 - `handoff full` を実行（Next必須、Decision/Triedは任意）
 - `handoff.md` だけcommit（他ファイルを巻き込まない / stagingを汚さない）
+- `endwork` は push を行わない（`push済み` と書くのは `git push` 成功後のみ）
 
 > これは Cursor のチャット欄から呼べる“入口”ですが、実体はツール非依存のターミナルコマンド `endwork` です（Claude Code / Codex でも同じ動作をさせるため）。
 
@@ -17,4 +18,3 @@ endwork
 ```
 
 > 推奨: 終了時は `wrapup`（`git add -p` → `endwork`）の方が「再開効果」が高いです。
-

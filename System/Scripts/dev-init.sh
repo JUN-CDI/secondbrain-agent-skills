@@ -272,6 +272,7 @@ cat > "$PROJECT_DIR/.cursor/commands/endwork.md" << 'EOF'
 
 ## Description
 セッション終了時に、`handoff full` を残してから **`handoff.md` だけ**をcommitします（他ファイルを巻き込まない）。
+`endwork` 自体は push しません（`push済み` と書くのは `git push` 成功後のみ）。
 
 ## Prompt
 対象repoで `endwork` を実行してください。
