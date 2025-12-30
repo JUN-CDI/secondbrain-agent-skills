@@ -306,3 +306,30 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - MM handoff.md
+
+### 2025-12-30 11:50 - Tool: codex - Mode: full
+
+- Purpose: 運用分析統合とendwork文言ガイドの更新
+- Now: 統合docとendworkガイドのcommit/push済み（handoff commitはこの後push）
+- Next: 必要なら の学習項目を追記
+- Risk: なし
+- Decision: endworkはpushしない旨を統合doc/ガイド/テンプレへ追記
+- Tried/Result: 統合docとendworkガイドを更新してpush
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
