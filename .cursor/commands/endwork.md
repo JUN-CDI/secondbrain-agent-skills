@@ -6,6 +6,7 @@
 - `handoff full` を実行（Next必須、Decision/Triedは任意）
 - `handoff.md` だけcommit（他ファイルを巻き込まない / stagingを汚さない）
 - `endwork` は push を行わない（`push済み` と書くのは `git push` 成功後のみ）
+- CLI で `--next` を渡す場合はバッククォートを使わない（必要なら単一引用符か対話入力）
 
 > これは Cursor のチャット欄から呼べる“入口”ですが、実体はツール非依存のターミナルコマンド `endwork` です（Claude Code / Codex でも同じ動作をさせるため）。
 

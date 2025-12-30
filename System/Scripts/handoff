@@ -57,6 +57,10 @@ Options:
 Environment overrides:
   HANDOFF_TOOL, HANDOFF_STATUS_MAX_LINES, HANDOFF_DIFFSTAT_MAX_LINES, HANDOFF_FILES_MAX
   HANDOFF_MAX_PURPOSE, HANDOFF_MAX_NOW, HANDOFF_MAX_RISK, HANDOFF_MAX_NEXT, HANDOFF_MAX_DECISION, HANDOFF_MAX_TRIED
+
+Notes:
+  - Avoid backticks in CLI args; use single quotes or interactive input.
+  - If Next looks incomplete (e.g., "必要なら の..."), the script will require re-entry.
 EOF
 }
 
@@ -80,6 +84,11 @@ sanitize_one_line() {
     s="$(printf '%s' "$s" | cut -c "1-${max}")"
   fi
   printf '%s' "$s"
+}
+
+looks_incomplete_next() {
+  local s="${1:-}"
+  [[ "$s" =~ 必要なら[[:space:]]+の ]] || [[ "$s" =~ 必要なら[[:space:]]+を ]]
 }
 
 extract_last_slot() {
@@ -242,6 +251,17 @@ fi
 NEXT="$(sanitize_one_line "$NEXT" "$MAX_NEXT")"
 if [[ -z "${NEXT// }" ]]; then
   die "Next is required. Provide --next \"...\" or run interactively."
+fi
+
+if looks_incomplete_next "$NEXT"; then
+  if is_tty; then
+    echo "Warning: Next looks incomplete (missing object after '必要なら'). Re-enter a concrete target." >&2
+    read -r -p "Next (required, one line): " NEXT || true
+    NEXT="$(sanitize_one_line "$NEXT" "$MAX_NEXT")"
+  fi
+  if looks_incomplete_next "$NEXT"; then
+    die "Next looks incomplete. Provide a concrete target after '必要なら'."
+  fi
 fi
 
 PURPOSE="$(sanitize_one_line "$PURPOSE" "$MAX_PURPOSE")"
