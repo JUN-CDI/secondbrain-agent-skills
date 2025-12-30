@@ -1,0 +1,43 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "claude-terminal",
+      "type": "shell",
+      "command": "claude",
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "group": "ai-terminals",
+        "clear": false,
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "codex-terminal",
+      "type": "shell",
+      "command": "codex",
+      "presentation": {
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "group": "ai-terminals",
+        "clear": false,
+        "showReuseMessage": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "setup-ai-terminals",
+      "dependsOn": [
+        "claude-terminal",
+        "codex-terminal"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}
+

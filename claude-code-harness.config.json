@@ -1,0 +1,12 @@
+{
+  "i18n": {
+    "language": "ja"
+  },
+  "scaffolding": {
+    "tech_choice_mode": "ask",
+    "allow_web_search": true
+  },
+  "workflow": {
+    "mode": "solo"
+  }
+}

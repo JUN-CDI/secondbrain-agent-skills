@@ -1,31 +1,39 @@
-# Ignore everything by default; explicitly include skill packages.
-*
+# === SecondBrain Git Strategy: Operations & Harness Only ===
+# Gitに入れる: 運用/ハーネス設定
+# Gitに入れない: 個人ノート/ログ/バックアップ/一時ファイル
 
-# Always keep these.
-!.gitignore
-!README.md
+# === 個人ノート（Git対象外） ===
+Atlas/
+Calendar/
+Efforts/
+attachments/
 
-# Skill packages (Cursor/Codex-friendly root layout).
-!data-safety/
-!data-safety/**/*
-!diff-review/
-!diff-review/**/*
-!git-checkpoint/
-!git-checkpoint/**/*
-!ops-maintenance/
-!ops-maintenance/**/*
+# === Obsidian（安定設定のみ追跡） ===
+.obsidian/*
+!.obsidian/app.json
 
-# Legacy layouts (kept if present).
-!.claude/
-!.claude/**/*
-!.codex/
-!.codex/**/*
+# === Cursorログ（Git対象外） ===
+.logs/
 
-# Exclude local templates/tools from the published skill set.
-skill-creator/
-skill-template/
+# === 移行スナップショット（Git対象外） ===
+.migration-backup/
 
-# OS / editor / temp
+# === System/Skills は別Git repoとして運用（このVault repoでは追跡しない） ===
+System/Skills/
+
+# === 引き継ぎログはローカル運用（Git対象外） ===
+System/Documentation/引き継ぎ.md
+
+# === Claudeローカルログ（Git対象外） ===
+.claude/memory/session-log.md
+.claude/state/
+
+# === エディタ設定（必要最小限） ===
+.vscode/*
+!.vscode/tasks.json
+.idea/
+
+# === OS/エディタ/一時ファイル（Git対象外） ===
 .DS_Store
 .DS_Store?
 ._*
@@ -33,10 +41,11 @@ skill-template/
 .Trashes
 ehthumbs.db
 Thumbs.db
-.vscode/
-.idea/
 *.swp
 *.swo
 *~
 *.tmp
 *.log
+
+# === Workspace設定（個人環境依存のためGit対象外） ===
+*.code-workspace

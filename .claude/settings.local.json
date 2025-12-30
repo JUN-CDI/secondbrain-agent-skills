@@ -1,0 +1,83 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(du:*)",
+      "Bash(rm:*)",
+      "Bash(git fetch:*)",
+      "Bash(git push:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)",
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(gh:*)",
+      "Bash(wc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(xxd:*)",
+      "Bash(node --check:*)",
+      "Skill(dev-handoff)",
+      "Skill(ops-maintenance)",
+      "Bash(~/.claude/ops-maintenance.last)",
+      "Bash(done)",
+      "Bash(find:*)",
+      "Bash(sort:*)",
+      "Bash(ls:*)",
+      "Skill(project-scaffold)",
+      "Skill(project-scaffold:*)",
+      "Bash(python3 -m py_compile:*)",
+      "Bash(claude plugin --help:*)",
+      "Bash(claude plugin marketplace add Chachamaru127/claude-code-harness)",
+      "Bash(claude plugin install:*)",
+      "Bash(claude:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '📂 SecondBrain Vault session started at $(date)' >> ~/.claude/session.log"
+          },
+          {
+            "type": "command",
+            "command": "ts_file=$HOME/.claude/ops-maintenance.last; now=$(date +%s); last=0; if [ -f $ts_file ]; then last=$(cat $ts_file || echo 0); fi; if [ $((now-last)) -gt 2592000 ]; then echo \"⚠️ ops-maintenance: last run >30d. Run 'ops-maintenance'.\"; fi"
+          },
+          {
+            "type": "command",
+            "command": "log_file=\"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Documentation/引き継ぎ.md\"; if [ -f \"$log_file\" ]; then mod_time=$(stat -f %m \"$log_file\"); now=$(date +%s); diff=$((now - mod_time)); if [ $diff -lt 86400 ]; then echo \"📋 引き継ぎ.md が24時間以内に更新されています。確認してください。\"; fi; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read f; [ -n \"$f\" ] && echo \"$(date +%Y-%m-%d\\ %H:%M:%S) Modified: $f\" >> ~/.claude/file-changes.log || true; }"
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read f; log=\"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain/System/Documentation/引き継ぎ.md\"; today=$(date +%Y-%m-%d); if [ -n \"$f\" ] && ! echo \"$f\" | grep -q '引き継ぎ'; then if ! grep -q \"^## $today$\" \"$log\" 2>/dev/null; then printf \"\\n## %s\\n\\n\" \"$today\" >> \"$log\" 2>/dev/null || true; fi; echo \"- $(date +%H:%M) $f\" >> \"$log\" 2>/dev/null || true; fi; }"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain\" && bash System/Scripts/git-stage-ops.sh 2>/dev/null || true"
+          }
+        ]
+      },
+      {
+        "matcher": "TodoWrite",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain\" && bash System/Scripts/git-stage-ops.sh 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}

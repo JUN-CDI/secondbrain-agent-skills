@@ -1,23 +1,68 @@
-# SecondBrain Agent Skills
+# 🏠 SecondBrain - Welcome
 
-This repository contains Agent Skills (`<skill>/SKILL.md`) for the SecondBrain knowledge management system.
+このVaultは **ACEフレームワーク** に基づいて整理されています。
 
-## Skills (root)
+## 🗺️ 3つのエリア
 
-- **data-safety**: Prevent committing real data outputs (CSV/XLSX, deliverables, etc.)
-- **diff-review**: Review staged git diffs with concrete, prioritized findings
-- **git-checkpoint**: Create clean checkpoints via `git add -p` → `git diff --staged`
-- **ops-maintenance**: Check official docs/release notes and update local workflows/docs
+### 📚 [[Atlas/🗺️ Atlas-MOC|Atlas]] - 時代を超えた知識
+3ヶ月後も参照する長期知識を保存
 
-## Legacy (Claude Code)
+- AI、ビジネス、教育、技術などの知識
+- 再利用可能なテンプレート・パターン
+- **MOCファイルで整理**（フォルダは最小限）
 
-`/.claude/skills/` is kept for compatibility with older Claude Code setups. Cursor/Codex usage should prefer the root skill packages above.
+### 📅 [[Calendar/inbox|Calendar]] - 時間ベース
+日々のメモ・一時的な情報
 
-## Installation
+- `inbox/` - クイックキャプチャ（旧 03_Input）
+- `2025-12/` - デイリーノート
+- **週次で整理** → Atlas or Efforts へ振り分け
 
-- **Cursor (Nightly)**: Settings → Rules → Import Settings → Agent Skills → add this GitHub repo URL
-- **Codex CLI**: copy/sync skill directories into `~/.codex/skills/` (see your local `sync-codex-skills.sh`)
+### 🎯 [[Efforts/🎯 Efforts-MOC|Efforts]] - 進行中プロジェクト
+期限のある活動・プロジェクト
 
-## Notes
+- （各プロジェクトのフォルダ） - プロジェクト運用ノート
+- `archived/` - 完了プロジェクト
 
-- Do not commit secrets (SSH private keys, tokens, etc.) to this repository.
+## 🔧 システム
+
+- [[System/Documentation/運用ガイド-全体像|運用ガイド]] - システム全体像
+- [[System/Documentation/運用フロー-2つの動線|運用フロー]] - 2つの主要動線
+- [[AGENTS]] - 開発フロー定義
+- [[CLAUDE]] - Vault運用ルール
+- [[Plans]] - タスク管理
+
+## 🚀 クイックスタート
+
+### 新しいアイデアをメモしたい
+```
+1. Calendar/inbox/ に新規ファイル作成
+2. 書く
+3. 週末に整理して振り分け
+```
+
+### 新しいプロジェクトを始めたい
+```
+1. /dev-init <project-name>
+2. /project-init <project-name>
+3. Efforts/<project-name>/ にフォルダ作成
+```
+
+### 知識を探したい
+```
+1. Atlas/🗺️ Atlas-MOC を開く
+2. カテゴリーのMOCを辿る
+3. タグ検索 (#ai, #business など)
+```
+
+## 📖 運用フロー
+
+- **インプット**: `Calendar/inbox/` → 週次整理 → `Atlas/` or `Efforts/`
+- **開発**: `Workspaces/projects/` ← ローカル開発
+- **完了**: `Efforts/` → `Efforts/archived/`
+
+---
+
+**ACE原則**: フォルダは後から必要になったときに作る。まずはMOCファイルでリンク。
+
+最終更新: 2025-12-24（ACE移行）

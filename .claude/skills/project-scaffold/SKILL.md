@@ -14,6 +14,7 @@ allowed-tools: Read, Write, Bash(mkdir:*), Bash(git:*), Bash(gh:*)
 Ask user if not provided:
 - Project name (required)
 - Project type: `node` / `python` / `web` / `general`
+- Git initialization: yes/no（テスト/プレイグラウンドならNO推奨）
 - GitHub creation: yes/no
 
 ### Step 2: Create Folder Structure
@@ -75,7 +76,7 @@ touch "$PROJECT_DIR/deliverables/.gitkeep"
 - deliverables/ - 成果物
 
 ## 関連
-- Vault: 05_Output/Projects/@Active/<project-name>/
+- Vault: Efforts/<project-name>/
 ```
 
 #### .gitignore (by type)
@@ -103,6 +104,7 @@ __pycache__/
 ```
 
 ### Step 4: Initialize Git
+If user chose Git initialization:
 ```bash
 cd "$PROJECT_DIR"
 git init
@@ -111,6 +113,7 @@ git commit -m "Initial commit"
 ```
 
 ### Step 5: Create GitHub Repo (if requested)
+Only if Git was initialized:
 ```bash
 gh repo create JUN-CDI/<project-name> --private --source=. --remote=origin --push
 ```
@@ -131,7 +134,7 @@ gh repo create JUN-CDI/<project-name> --private --source=. --remote=origin --pus
 
 ### 次のステップ
 1. Vault側: /project-init <project-name> active
-2. 00-プロジェクト概要.md にRepoパス記載
+2. 00-概要.md にRepoパス記載
 3. 開発開始
 ```
 

@@ -74,7 +74,7 @@ YYYY-MM-DD（1ヶ月後）
 ### Step 5: Save Report (Optional)
 If user wants to save:
 ```
-Write: 07_System/Documentation/Claude-Code-Updates/YYYY-MM-DD-update.md
+Write: System/Documentation/Claude-Code-Updates/YYYY-MM-DD-update.md
 ```
 
 ## Update Check Schedule
@@ -94,5 +94,5 @@ Recommend checking:
 When significant updates found:
 1. Update relevant Skills
 2. Modify Hooks if needed
-3. Update documentation in 07_System/
+3. Update documentation in System/
 4. Notify user of breaking changes

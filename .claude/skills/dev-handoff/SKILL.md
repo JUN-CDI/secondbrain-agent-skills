@@ -15,6 +15,7 @@ Ask if missing:
 - Repo path
 - Branch name
 - Whether to stage changes (`git add -p`) or keep as-is
+ - Whether to append to the shared Vault handoff log (`System/Documentation/引き継ぎ.md`)
 
 ### Step 2: Collect status
 Run the minimum commands:
@@ -77,3 +78,4 @@ Ask the user to paste:
 - `git status -sb`
 - `git diff --staged --stat`
 - the handoff summary above
+ - If working across tools: add a short entry to `System/Documentation/引き継ぎ.md` (`- HH:MM <path> - <note>`)

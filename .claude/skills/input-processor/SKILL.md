@@ -1,19 +1,18 @@
 ---
 name: input-processor
-description: Process and organize files in 03_Input folder. Use when user mentions "Input整理", "メモ整理", "03_Input", "振り分け", or asks to organize notes and memos.
+description: Process and organize files in Calendar/inbox folder. Use when user mentions "Input整理", "メモ整理", "inbox", "振り分け", or asks to organize notes and memos.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mv:*), Bash(mkdir:*)
 ---
 
 # Input Processor Skill
 
-03_Inputフォルダ内のファイルを自動的に整理・振り分けするスキルです。
+`Calendar/inbox/` フォルダ内のファイルを自動的に整理・振り分けするスキルです。
 
 ## Instructions
 
-### Step 1: Scan 03_Input
+### Step 1: Scan Calendar/inbox
 ```bash
-# List all files in 03_Input
-ls -la "03_Input/"
+ls -la "Calendar/inbox/"
 ```
 
 ### Step 2: Read and Analyze Each File
@@ -26,25 +25,27 @@ For each file:
 Based on content analysis:
 
 | Condition | Destination |
-|-----------|-------------|
-| 3ヶ月後も参照価値あり | `04_Memory/[category]/` |
-| プロジェクト関連 | `05_Output/Projects/` |
-| 継続活動関連 | `05_Output/Areas/` |
-| 日次記録 | `02_Daily/YYYY/YYYY-MM/YYYY-MM-DD/` |
-| 判断困難 | `99_Archive/` |
-| 今週使う | `03_Input/`（残す） |
+|---|---|
+| 3ヶ月後も参照価値あり | `Atlas/` |
+| 期限あり/進行中（プロジェクト） | `Efforts/` |
+| 手順/納品物（参照版） | `Atlas/`（正本は `Finals(OneDrive)` 等に置いてリンク） |
+| 日次記録 | `Calendar/YYYY-MM/` |
+| 判断困難 / 迷う | `Calendar/inbox/`（残す） |
+| 使い終わり | `Efforts/archived/` |
 
 ### Step 4: Move Files
 ```bash
 # Example move command
-mv "03_Input/filename.md" "04_Memory/AI/Tools/"
+mv "Calendar/inbox/filename.md" "Atlas/"
 ```
 
 ### Step 5: Update Metadata
 After moving:
 - Add appropriate tags in frontmatter
 - Add relevant [[links]]
-- Update MOC if moved to Memory
+- If moved to `Atlas/`, update MOC links (minimum 1 link)
+  - `Atlas/🗺️ Atlas-MOC.md`
+  - and/or one of the domain MOCs below
 
 ### Step 6: Report Summary
 Output a table summarizing all moves:
@@ -52,18 +53,16 @@ Output a table summarizing all moves:
 ```markdown
 | ファイル | 移動先 | 理由 |
 |---------|--------|------|
-| file1.md | 04_Memory/AI/ | AI関連の長期知識 |
+| file1.md | Atlas/ | 長期で参照する知識 |
 ```
 
-## Memory Subfolders
-- `AI/` - AI関連（Tools, Techniques, Concepts）
-- `Business/` - ビジネス関連
-- `Education/` - 教育関連
-- `Personal/` - 個人関連
-- `Technical/` - 技術関連
+## Atlas MOCs (flat)
+- `Atlas/_AI-MOC.md`
+- `Atlas/_Business-MOC.md`
+- `Atlas/_Education-MOC.md`
+- `Atlas/_Personal-MOC.md`
 
 ## Important Rules
 - ALWAYS read file content before deciding
 - NEVER judge by filename alone
-- Create subfolders if they don't exist
-- Preserve original file dates where possible
+- Do NOT create deep subfolders in `Atlas/` (keep it flat)

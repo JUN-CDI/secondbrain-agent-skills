@@ -18,11 +18,11 @@ Ask if missing:
 
 ### Step 2: Load current local context
 Read these files first:
-- `07_System/Documentation/運用ガイド-全体像.md`
-- `07_System/Documentation/Claude-Code-Skills-Scripts.md`
-- `07_System/Documentation/運用フロー-2つの動線.md`
-- `07_System/Workflows/運用フロー-2本柱.md`
-- `07_System/Skills/` (Codex skills)
+- `System/Documentation/運用ガイド-全体像.md`
+- `System/Documentation/Claude-Code-Skills-Scripts.md`
+- `System/Documentation/運用フロー-2つの動線.md`
+- `System/Workflows/運用フロー-2本柱.md`
+- `System/Skills/` (Codex skills)
 - `.claude/skills/` (Claude Code skills)
 
 Summarize current assumptions and workflows.
@@ -43,14 +43,14 @@ Provide a brief list of:
 
 ### Step 5: Apply updates (if approved)
 Edit the relevant docs and templates:
-- `07_System/Documentation/*.md`
-- `06_Templates/Projects/*`
-- `.claude/skills/*` / `07_System/Skills/*`
+- `System/Documentation/*.md`
+- `System/Templates/*`
+- `.claude/skills/*` / `System/Skills/*`
 
 ### Step 6: Sync Codex skills (if changed)
-If `07_System/Skills/` changed, run:
+If `System/Skills/` changed, run:
 ```
-./07_System/Scripts/sync-codex-skills.sh
+./System/Scripts/sync-codex-skills.sh
 ```
 
 ### Step 7: Record last run
