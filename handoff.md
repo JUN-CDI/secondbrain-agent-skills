@@ -196,8 +196,8 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 ### 2025-12-30 11:17 - Tool: codex - Mode: full
 
 - Purpose: 運用更新（handoff/endwork/wrapup）、rebase+push、handoff一覧拡張
-- Now: 全変更コミット済み・push済み、repo clean
-- Next: 必要な新作業が出たら着手（まず ## main...origin/main で確認）
+- Now: 全変更コミット済み・push済み（このエントリ追加により handoff.md が一時的に変更中）
+- Next: 必要な新作業が出たら着手（まず `git status -sb` で確認）
 - Risk: なし
 - Decision: handoff一覧は status --porcelain を採用、README/.gitignore は ACE 版で解決
 - Tried/Result: git pull --rebase → conflict解消 → push 完了
@@ -219,4 +219,33 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 ```text
 ```
 - ChangedFiles (top 20):
+  -  M handoff.md
+
+### 2025-12-30 11:24 - Tool: codex - Mode: full
+
+- Purpose: Cursor通知の矛盾解消と handoff スナップショット改善
+- Now: handoff.mdの文言補正済み、handoffスクリプト更新コミット済み（push待ち）
+- Next: 次回は ## main...origin/main [ahead 1] M handoff.md で状態確認してから作業再開
+- Risk: なし
+- Decision: GitStatus/Diff/ChangedFilesは追記前スナップショットを記録
+- Tried/Result: 通知原因: handoff追記後にstatus取得 → M handoff.md となった
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main [ahead 1]
+ M handoff.md
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+ handoff.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
   -  M handoff.md
