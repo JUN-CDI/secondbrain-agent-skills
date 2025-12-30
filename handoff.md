@@ -280,8 +280,8 @@ A  "System/Documentation/\351\201\213\347\224\250\343\203\225\343\203\255\343\20
 ### 2025-12-30 11:35 - Tool: codex - Mode: full
 
 - Purpose: 運用分析統合ドキュメントの整理とhandoff修正
-- Now: 統合doc作成・archive移動・運用更新ログ追記・push済み、handoff Next修正中
-- Next: 必要なら System/Documentation/運用フロー分析-統合.md を追記
+- Now: 統合doc作成・archive移動・運用更新ログ追記・push待ち（このエントリ後に実施）、handoff Next修正中
+- Next: 必要なら `System/Documentation/運用フロー分析-統合.md` を追記
 - Risk: なし
 - Decision: エラー学習を統合ドキュメントに明記
 - Tried/Result: docs commit/push、handoff Next 文言修正
