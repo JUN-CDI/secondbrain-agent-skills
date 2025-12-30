@@ -311,7 +311,7 @@ MM handoff.md
 
 - Purpose: 運用分析統合とendwork文言ガイドの更新
 - Now: 統合docとendworkガイドのcommit/push済み（handoff commitはこの後push）
-- Next: 必要なら の学習項目を追記
+- Next: 必要なら `System/Documentation/運用フロー分析-統合.md` の学習項目を追記
 - Risk: なし
 - Decision: endworkはpushしない旨を統合doc/ガイド/テンプレへ追記
 - Tried/Result: 統合docとendworkガイドを更新してpush
