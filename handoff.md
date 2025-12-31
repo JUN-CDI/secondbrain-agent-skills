@@ -437,3 +437,41 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+### 2026-01-01 08:09 - Tool: codex - Mode: full
+
+- Purpose: 整頓: repo直下の重複skillフォルダ削除
+- Now: data-safety/diff-review/git-checkpoint/ops-maintenance(直下)を削除。原本はSystem/Skills。
+- Next: git status -sbで削除差分を確認し、必要ならコミット
+- Risk: 削除差分は未コミット。必要なら通常のgit commitで確定。
+- Decision: Skill原本はSystem/Skillsに統一
+- Tried/Result: diff/rgで参照と内容を確認→rm -rfで直下重複を削除
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main
+ D data-safety/SKILL.md
+ D diff-review/SKILL.md
+ D git-checkpoint/SKILL.md
+ D ops-maintenance/SKILL.md
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+ data-safety/SKILL.md     | 25 -------------------------
+ diff-review/SKILL.md     | 30 ------------------------------
+ git-checkpoint/SKILL.md  | 23 -----------------------
+ ops-maintenance/SKILL.md | 40 ----------------------------------------
+ 4 files changed, 118 deletions(-)
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  -  D data-safety/SKILL.md
+  -  D diff-review/SKILL.md
+  -  D git-checkpoint/SKILL.md
+  -  D ops-maintenance/SKILL.md
