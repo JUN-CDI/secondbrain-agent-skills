@@ -500,3 +500,28 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+### 2026-01-01 16:58 - Tool: codex - Mode: full
+
+- Purpose: ドキュメント整合: skill原本の明記とattachments除去
+- Now: CLAUDE.mdにSkill原本(System/Skills)と同期(sync-claude-skills.sh)を明記。.gitignoreからattachments/除外を削除。
+- Next: 必要ならgit push。
+- Risk: skills運用の編集先誤りリスクを低減。
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main [ahead 5]
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
