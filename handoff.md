@@ -525,3 +525,28 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+### 2026-01-01 17:01 - Tool: codex - Mode: full
+
+- Purpose: AGENTS.md整備: skill原本の明記
+- Now: AGENTS.mdのAI指示に、SkillはSystem/Skills(原本)を編集し同期する方針を追記。
+- Next: 必要ならgit push。
+- Risk: コピー側編集による分岐/混乱を抑止。
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main [ahead 7]
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
