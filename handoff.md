@@ -475,3 +475,28 @@ MM handoff.md
   -  D diff-review/SKILL.md
   -  D git-checkpoint/SKILL.md
   -  D ops-maintenance/SKILL.md
+
+### 2026-01-01 16:55 - Tool: codex - Mode: full
+
+- Purpose: 運用整頓: attachmentsフォルダ廃止
+- Now: attachmentsは空で未使用(Obsidian設定はCalendar/inbox)。ドキュメントからattachments前提を除去。
+- Next: 必要ならgit push。添付の保存先を変えるなら .obsidian/app.json の attachmentFolderPath を更新
+- Risk: Atlas内の非git管理ノートも記述更新済み。必要ならObsidian設定をattachmentsに戻せる。
+
+#### Auto (git)
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+```text
+## main...origin/main [ahead 3]
+```
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+```text
+
+```
+- GitDiffStat (staged, snapshot, top 20 lines):
+```text
+
+```
+- ChangedFiles (snapshot, top 20):
+  - (none)
