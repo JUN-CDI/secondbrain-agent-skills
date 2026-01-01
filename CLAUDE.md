@@ -87,6 +87,8 @@ claude skill input-processor      # Input整理
 claude skill ops-maintenance      # 運用メンテナンス
 ```
 
+> メモ: スキルの編集は原則 `System/Skills/`（原本。別Git repo）で行い、実行環境（`~/.claude/skills/` や repo の `.claude/skills/`）へは `System/Scripts/sync-claude-skills.sh` で同期します。
+
 ### ワークフロー
 ```
 /sync-status                      # 現在の状態確認

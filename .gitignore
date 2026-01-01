@@ -6,7 +6,6 @@
 Atlas/
 Calendar/
 Efforts/
-attachments/
 
 # === Obsidian（安定設定のみ追跡） ===
 .obsidian/*
