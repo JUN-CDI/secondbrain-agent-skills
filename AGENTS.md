@@ -64,5 +64,6 @@ System/
 - 判定フローで保存先を決め、迷ったら `Calendar/inbox/`
 - 命名規則を厳守
 - 必要なら関連ノートへ1〜2件リンク
+- Skillは原則 `System/Skills/`（原本。別Git repo）を編集し、実行環境（`~/.codex/skills/` / `~/.claude/skills/` / repoの `.claude/skills/`）へは同期スクリプトで反映する（コピー側を直接編集しない）
 - 新しいSkill/コマンドを追加した場合は `tool-parity`（`tool-parity-check.sh`）で入口整合を確認
 - セッション終了時は、作業しているrepoで `handoff` / `endwork` を使って `handoff.md` を更新
