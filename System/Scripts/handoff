@@ -122,7 +122,6 @@ This file is the single source of truth for resuming work in this repo.
 
 - Switch / uncertainty: run `handoff quick`
 - Session end: run `endwork`
-
 EOF
 }
 
@@ -352,7 +351,7 @@ if [[ -n "$REPO_ROOT" ]]; then
 fi
 
 {
-  printf "\n### %s - Tool: %s - Mode: %s\n\n" "$TS" "$TOOL" "$MODE"
+  printf "\n## %s - Tool: %s - Mode: %s\n\n" "$TS" "$TOOL" "$MODE"
   printf -- "- Purpose: %s\n" "$PURPOSE"
   printf -- "- Now: %s\n" "$NOW"
   printf -- "- Next: %s\n" "$NEXT"
@@ -367,26 +366,26 @@ fi
   fi
 
   if [[ -n "$REPO_ROOT" ]]; then
-    printf "\n#### Auto (git)\n"
+    printf "\n### Auto (git)\n\n"
     printf -- "- Repo: %s\n" "$REPO_ROOT"
     printf -- "- GitBranch: %s\n" "$CUR_BRANCH"
 
-    printf -- "- GitStatus (snapshot, top %s lines):\n" "$STATUS_MAX_LINES"
+    printf -- "- GitStatus (snapshot, top %s lines):\n\n" "$STATUS_MAX_LINES"
     printf '%s\n' '```text'
     printf '%s\n' "$STATUS_SNAPSHOT"
     printf '%s\n' '```'
 
-    printf -- "- GitDiffStat (unstaged, snapshot, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
+    printf -- "\n- GitDiffStat (unstaged, snapshot, top %s lines):\n\n" "$DIFFSTAT_MAX_LINES"
     printf '%s\n' '```text'
     printf '%s\n' "$DIFFSTAT_UNSTAGED_SNAPSHOT"
     printf '%s\n' '```'
 
-    printf -- "- GitDiffStat (staged, snapshot, top %s lines):\n" "$DIFFSTAT_MAX_LINES"
+    printf -- "\n- GitDiffStat (staged, snapshot, top %s lines):\n\n" "$DIFFSTAT_MAX_LINES"
     printf '%s\n' '```text'
     printf '%s\n' "$DIFFSTAT_STAGED_SNAPSHOT"
     printf '%s\n' '```'
 
-    printf -- "- ChangedFiles (snapshot, top %s):\n" "$FILES_MAX"
+    printf -- "\n- ChangedFiles (snapshot, top %s):\n\n" "$FILES_MAX"
     changed_files="$CHANGED_FILES_SNAPSHOT"
     if [[ -z "${changed_files// }" ]]; then
       printf "  - (none)\n"
