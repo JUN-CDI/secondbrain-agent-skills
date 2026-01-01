@@ -16,7 +16,6 @@ Atlas/
 Calendar/
 Efforts/
 System/
-attachments/
 ```
 
 ### ワークスペース構成

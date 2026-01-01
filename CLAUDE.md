@@ -36,7 +36,6 @@ SecondBrain/
 │   ├── Dashboards/
 │   ├── Templates/
 │   └── prompts/
-├── attachments/       # 添付ファイル専用
 ├── .claude/           # Claude Code 設定
 │   ├── settings.json
 │   ├── skills/
