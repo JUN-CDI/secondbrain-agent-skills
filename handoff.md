@@ -667,3 +667,37 @@ MM handoff.md
   - ?? "System/Documentation/\343\203\227\343\203\255\343\202\270\343\202\247\343\202\257\343\203\210\351\205\215\345\270\203-\351\201\213\347\224\250.md"
   - ?? System/Scripts/project-release.sh
   - ?? System/Scripts/project-scaffold.sh
+
+## 2026-01-02 18:36 - Tool: terminal - Mode: full
+
+- Purpose: Adopt minimal folder structure and auto-normalize/zip workflow
+- Now: dev-init/project-scaffold now create minimal src/release/docs/tmp; added project-normalize.sh; project-release.sh now bu
+- Next: Update project-scaffold skill in System/Skills to call SSOT scripts; consider making release README template per type
+- Risk: project-normalize is intentionally conservative; some repos still have legacy folders (samples/deliverables) but are not
+- Decision: Keep editable sources in src/, keep release/ untracked, never include samples; automate normalization and zip creation via scripts
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  - (none)
