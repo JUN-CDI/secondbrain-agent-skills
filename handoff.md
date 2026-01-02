@@ -583,3 +583,36 @@ MM handoff.md
 - ChangedFiles (snapshot, top 20):
 
   - (none)
+
+## 2026-01-02 17:06 - Tool: codex - Mode: full
+
+- Purpose: handoff.mdの見出し階層を統一
+- Now: handoffスクリプトの現行出力(## タイムスタンプ / ### Auto(git))に合わせて、過去エントリの見出し(###/####)を一括で統一。
+- Next: 必要ならgit push。
+- Risk: 内容は変更せず見出しのみ。
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main [ahead 12]
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  - (none)
