@@ -616,3 +616,54 @@ MM handoff.md
 - ChangedFiles (snapshot, top 20):
 
   - (none)
+
+## 2026-01-02 18:00 - Tool: wrapup - Mode: full
+
+- Purpose: Unify release-first distribution and scaffolding across Cursor/Claude/Codex
+- Now: Added release rules + zip tooling; updated dev-init to create release/ and standard folders; added Cursor /project-relea
+- Next: decide hooks/skills entrypoints; update System/Skills project-scaffold to call SSOT scripts
+- Risk: Tool entrypoints may drift unless tool-parity/skills are updated; external projects now contain generated zips
+- Decision: SSOT is System/Scripts; hooks only for reminders/checks; samples never bundled; distribution is zip from release/
+- Tried/Result: Created release/ across projects; generated zips; adjusted zip content to avoid README filename mojibake
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main [ahead 13]
+ M .cursor/commands/README.md
+ M .cursor/commands/dev-init.md
+ M System/Scripts/dev-init.sh
+?? .cursor/commands/project-release.md
+?? "System/Documentation/\343\203\227\343\203\255\343\202\270\343\202\247\343\202\257\343\203\210\351\205\215\345\270\203-\351\201\213\347\224\250.md"
+?? System/Scripts/project-release.sh
+?? System/Scripts/project-scaffold.sh
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+ .cursor/commands/README.md   |  3 +++
+ .cursor/commands/dev-init.md |  4 +++-
+ System/Scripts/dev-init.sh   | 39 ++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 44 insertions(+), 2 deletions(-)
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  -  M .cursor/commands/README.md
+  -  M .cursor/commands/dev-init.md
+  -  M System/Scripts/dev-init.sh
+  - ?? .cursor/commands/project-release.md
+  - ?? "System/Documentation/\343\203\227\343\203\255\343\202\270\343\202\247\343\202\257\343\203\210\351\205\215\345\270\203-\351\201\213\347\224\250.md"
+  - ?? System/Scripts/project-release.sh
+  - ?? System/Scripts/project-scaffold.sh
