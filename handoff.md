@@ -701,3 +701,37 @@ MM handoff.md
 - ChangedFiles (snapshot, top 20):
 
   - (none)
+
+## 2026-01-02 18:39 - Tool: terminal - Mode: full
+
+- Purpose: Make release zip output single-file by default
+- Now: project-release.sh now outputs release/<project>.zip by default; add --keep-history for timestamped zips; docs updated
+- Next: (Optional) delete old timestamped zips under Workspaces/projects/*/release; run project-release.sh --all --zip to regenerate one-per-project
+- Risk: (carry) project-normalize is intentionally conservative; some repos still have legacy folders (samples/deliverables) but are not
+- Decision: Default is one zip per project to reduce clutter; history only when explicitly requested
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  - (none)
