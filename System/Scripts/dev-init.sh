@@ -107,18 +107,14 @@ if [[ "$GITHUB" == "true" && "$INIT_GIT" != "true" ]]; then
     GITHUB=false
 fi
 
-# Create directories
+# Create directories (minimal by default)
 echo -e "${YELLOW}📁 Creating folder structure...${NC}"
-mkdir -p "$PROJECT_DIR"/{docs,src,tests,scripts,tmp,release,samples,deliverables,.vscode}
+mkdir -p "$PROJECT_DIR"/{src,release,docs,tmp,.vscode}
 mkdir -p "$PROJECT_DIR/.cursor"/{commands,rules}
-touch "$PROJECT_DIR/docs/.gitkeep"
 touch "$PROJECT_DIR/src/.gitkeep"
-touch "$PROJECT_DIR/tests/.gitkeep"
-touch "$PROJECT_DIR/scripts/.gitkeep"
 touch "$PROJECT_DIR/tmp/.gitkeep"
 touch "$PROJECT_DIR/release/.gitkeep"
-touch "$PROJECT_DIR/samples/.gitkeep"
-touch "$PROJECT_DIR/deliverables/.gitkeep"
+touch "$PROJECT_DIR/docs/.gitkeep"
 
 # Create release README (distribution SSOT)
 cat > "$PROJECT_DIR/release/README-配布手順.md" << EOF
@@ -204,7 +200,7 @@ cat > "$PROJECT_DIR/.cursor/rules/ai-workflow.md" << 'EOF'
 
 ## Data & Git
 - Do **not** commit real data (CSV/Excel) by default.
-- Put inputs in `samples/` and outputs in `deliverables/` (both are gitignored by default; keep only `.gitkeep` tracked).
+- Do **not** commit distribution artifacts (`release/*.zip`).
 - If a data file accidentally became tracked, remove it from Git index (keep local file): `git rm --cached <path>`.
 - Make diffs obvious: checkpoint often with `git add -p` and review via `git diff --staged` (leave WIP unstaged).
 
@@ -231,7 +227,7 @@ cat > "$PROJECT_DIR/.cursor/commands/codex-review.md" << 'EOF'
 2. `git diff` で未ステージ差分を確認
 3. レビュー対象の変更だけを `git add -p`（または `git add <file>`）でステージ（WIPは未ステージのままでOK）
 4. `git diff --staged` でレビュー対象の差分を確定
-5. `samples/` と `deliverables/` と実データ（CSV/Excel）が追跡されていないか確認（混入は除外）
+5. 実データ（CSV/Excel）や `release/*.zip` が追跡されていないか確認（混入は除外）
 6. `codex` を起動して `/review`（ステージ差分を中心に）を実行
 7. 指摘を反映して、再度 `git diff --staged` / `git diff` で確認
 EOF
@@ -248,7 +244,7 @@ cat > "$PROJECT_DIR/.cursor/commands/git-checkpoint.md" << 'EOF'
 3. まとまった変更だけを `git add -p`（または `git add <file>`）でステージ
 4. `git diff --staged` で「いま確定した差分」だけを確認
 5. （必要なら）`git restore --staged <file>` でステージを戻す
-6. サンプル/成果物（`samples/`, `deliverables/`, `*.csv`, `*.xlsx`）が追跡されていないか確認
+6. 実データ（`*.csv`, `*.xlsx`）や `release/*.zip` が追跡されていないか確認
 EOF
 
 cat > "$PROJECT_DIR/.cursor/commands/diff-review.md" << 'EOF'
@@ -268,7 +264,7 @@ cat > "$PROJECT_DIR/.cursor/commands/diff-review.md" << 'EOF'
    - 影響範囲（どこが壊れうるか）
    - 確認手順（どう確認するか）
 4. 新規/更新ファイルは、命名・配置・責務の妥当性も確認
-5. データ混入チェック（`samples/`, `deliverables/`, `*.csv`, `*.xlsx`）
+5. データ混入チェック（`*.csv`, `*.xlsx`, `release/*.zip`）
 6. 最後に「このまま進めて良いか」を Yes/No（条件付き可）で結論
 EOF
 
@@ -362,14 +358,10 @@ cat > "$PROJECT_DIR/CLAUDE.md" << EOF
 ├── AGENTS.md        # Codex instructions
 ├── README.md        # Project overview
 ├── .gitignore       # Git exclusions
-├── docs/            # Design docs, specs
-├── src/             # Implementation
-├── tests/           # Tests / checks
-├── scripts/         # Helper scripts
-├── tmp/             # Throwaway / scratch
-├── release/         # Distribution (no samples; zip from here)
-├── samples/         # Sample inputs/fixtures
-└── deliverables/    # Output files (excluded from Git)
+├── src/             # Source of truth (editable)
+├── docs/            # Documentation (optional)
+├── tmp/             # Throwaway / scratch (optional)
+└── release/         # Distribution (untracked; zip from here)
 \`\`\`
 
 ## Related
@@ -397,9 +389,10 @@ cat > "$PROJECT_DIR/AGENTS.md" << EOF
 ## Repo Conventions
 
 ### Folder Structure
-- \`docs/\` - Design documents, specifications
-- \`samples/\` - Sample inputs, fixtures, test data (excluded from Git by default)
-- \`deliverables/\` - Output files (excluded from Git by default)
+- \`src/\` - Source of truth (editable)
+- \`release/\` - Distribution (untracked; zip from here)
+- \`docs/\` - Documentation (optional)
+- \`tmp/\` - Throwaway / scratch (optional)
 
 ### Git Practices
 - Commit small, focused changes
@@ -425,14 +418,10 @@ cat > "$PROJECT_DIR/README.md" << EOF
 
 
 ## フォルダ構成
-- docs/ - 仕様・設計メモ
 - src/ - 実装
-- tests/ - 検証
-- scripts/ - 補助作業
+- release/ - 配布物（Git管理しない。zipはここから作る）
+- docs/ - 仕様・設計メモ（必要な時だけ）
 - tmp/ - 一時作業
-- release/ - 配布物（サンプル同梱しない。zipはここから作る）
-- samples/ - サンプル入力/fixture（Git管理外）
-- deliverables/ - 書き出し成果物（Git管理外）
 
 ## 関連
 - Vault側管理ノート: \`Efforts/$PROJECT_NAME/00-概要.md\`
@@ -454,14 +443,6 @@ cat > "$PROJECT_DIR/.gitignore" << EOF
 
 # Logs
 *.log
-
-# Samples (exclude from Git by default)
-/samples/*
-!/samples/.gitkeep
-
-# Output (exclude from Git)
-/deliverables/*
-!/deliverables/.gitkeep
 
 # Release (distribution package)
 /release/*.zip
@@ -542,8 +523,9 @@ echo "   - .cursor/commands/handoff.md"
 echo "   - .cursor/commands/endwork.md"
 echo "   - .cursor/commands/wrapup.md"
 echo "   - docs/"
-echo "   - samples/"
-echo "   - deliverables/"
+echo "   - src/"
+echo "   - release/"
+echo "   - tmp/"
 echo ""
 echo -e "${YELLOW}🔗 Next steps:${NC}"
 echo "   1. Vault側の管理ノートを作成:"

@@ -12,12 +12,12 @@ Usage:
   project-scaffold.sh --name NAME --type TYPE [--projects-root PATH] [--dry-run]
 
 TYPE:
-  static-html       # standalone HTML in release/app
-  vite-web          # build-based web (release/web)
+  static-html       # standalone HTML / scripts (src -> release/app)
+  vite-web          # build-based web (dist -> release/web)
   python-streamlit  # Streamlit app (release has README only)
   python-cli        # Python CLI (release has README only)
   fullstack-docker  # Docker-compose based service (release has README only)
-  docs-only         # documents/deliverables only
+  docs-only         # documents only
 EOF
 }
 
@@ -63,19 +63,16 @@ write_file() {
   fi
 }
 
-mk "$dir/docs"
-mk "$dir/scripts"
-mk "$dir/tests"
-mk "$dir/tmp"
+mk "$dir/src"
 mk "$dir/release"
+mk "$dir/docs"
+mk "$dir/tmp"
 if $dry_run; then :; else : > "$dir/release/.gitkeep"; fi
 
 case "$type" in
   static-html)
-    mk "$dir/release/app"
     ;;
   vite-web)
-    mk "$dir/release/web"
     ;;
   python-streamlit|python-cli|fullstack-docker|docs-only)
     ;;
@@ -92,7 +89,7 @@ template=$(
 # 配布手順（$name）
 
 ## 配布物
-- \`release/\` をzip化して配布します（サンプル同梱なし）
+- \`release/\` をzip化して配布します（サンプル作成しない / 同梱しない）
 
 ## 使い方（受け手）
 - TODO: 最短手順を書く
@@ -104,4 +101,3 @@ EOF
 write_file "$readme_path" "$template"
 
 echo "OK: $dir"
-

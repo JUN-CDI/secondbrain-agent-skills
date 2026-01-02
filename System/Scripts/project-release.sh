@@ -13,9 +13,11 @@ Usage:
   project-release.sh [--projects-root PATH] (--all | --project NAME ...) [--zip] [--dry-run]
 
 Notes:
-  - Creates a zip from each project's `release/` folder.
-  - Packages: `release/README-配布手順.md` + (`release/app/` or `release/web/` if present).
-  - Does not include samples (because it only reads from `release/`).
+  - Creates a zip for distribution.
+  - Packages: README + payload
+    - Prefer `release/app/` or `release/web/` if present
+    - Otherwise auto-prepares from `src/` (-> app/) or `dist/` (-> web/) if present
+  - Never includes samples (it only packages release/app|web or src|dist).
 EOF
 }
 
@@ -45,6 +47,28 @@ fi
 
 timestamp="$(date '+%Y%m%d-%H%M')"
 
+copy_payload_from_src() {
+  local src_dir="$1"
+  local out_dir="$2"
+
+  mkdir -p "$out_dir"
+
+  # Files: keep a conservative allowlist for distribution.
+  find "$src_dir" -maxdepth 1 -type f \
+    \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.mjs' -o -name '*.json' -o -name '*.ps1' \) \
+    -print0 \
+    | while IFS= read -r -d '' f; do
+        cp -f "$f" "$out_dir/$(basename "$f")"
+      done
+
+  # Common asset folders (if present)
+  for sub in assets css js img images; do
+    if [ -d "$src_dir/$sub" ]; then
+      cp -R "$src_dir/$sub" "$out_dir/$sub"
+    fi
+  done
+}
+
 zip_one() {
   local name="$1"
   local dir="$projects_root/$name"
@@ -61,10 +85,20 @@ zip_one() {
   fi
 
   local payload=""
-  if [ -d "$release_dir/app" ]; then
-    payload="app"
+  local has_package_json=false
+  if [ -f "$dir/package.json" ]; then
+    has_package_json=true
+  fi
+
+  # Prefer generating payload from source/build output to avoid stale release/app|web.
+  if ! $has_package_json && [ -d "$dir/src" ] && find "$dir/src" -maxdepth 1 -type f \( -name '*.html' -o -name '*.ps1' \) | grep -q .; then
+    payload="app:src"
+  elif [ -d "$dir/dist" ]; then
+    payload="web:dist"
   elif [ -d "$release_dir/web" ]; then
     payload="web"
+  elif [ -d "$release_dir/app" ]; then
+    payload="app"
   else
     payload=""
   fi
@@ -90,9 +124,23 @@ zip_one() {
   if [ -f "$readme" ]; then
     cp -f "$readme" "$tmpdir/README.md"
   fi
-  if [ -n "$payload" ]; then
-    cp -R "$release_dir/$payload" "$tmpdir/$payload"
-  fi
+  case "$payload" in
+    app|web)
+      cp -R "$release_dir/$payload" "$tmpdir/$payload"
+      ;;
+    web:dist)
+      mkdir -p "$tmpdir/web"
+      cp -R "$dir/dist/"* "$tmpdir/web/" 2>/dev/null || true
+      ;;
+    app:src)
+      copy_payload_from_src "$dir/src" "$tmpdir/app"
+      ;;
+    "")
+      ;;
+    *)
+      echo "WARN: unknown payload selector: $payload" >&2
+      ;;
+  esac
 
   if command -v zip >/dev/null 2>&1; then
     (cd "$tmpdir" && zip -rq "$out_zip" .)

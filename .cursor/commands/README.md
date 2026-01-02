@@ -39,6 +39,9 @@
 ### /project-release
 **説明**: `release/` から配布用zipを作成（`System/Scripts/project-release.sh` を実行）
 
+### /project-normalize
+**説明**: Workspaces側の既存プロジェクトを最小構成へ正規化（`System/Scripts/project-normalize.sh` を実行）
+
 ### /handoff
 **説明**: 再開SSOT（repo直下 `handoff.md`）を更新する手順を案内（実体はターミナルの `handoff` / `endwork`）
 
