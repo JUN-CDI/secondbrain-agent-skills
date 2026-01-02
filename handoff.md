@@ -550,3 +550,36 @@ MM handoff.md
 ```
 - ChangedFiles (snapshot, top 20):
   - (none)
+
+## 2026-01-02 17:02 - Tool: codex - Mode: full
+
+- Purpose: CursorのMarkdownリンター通知を抑制
+- Now: Cursor側のmarkdownlintによるスタイル警告が常時出るため、repo直下に .markdownlint.json を追加して無効化。併せて handoff のgit status取得を--shortに変更。
+- Next: Cursorを再読み込みして赤波線が消えるか確認。必要ならgit push。
+- Risk: lintは無効化されるので、スタイル規約の自動検出は行われない（必要なら将来ルールを限定的に復活）。
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main [ahead 10]
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  - (none)
