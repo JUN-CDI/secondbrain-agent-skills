@@ -5,15 +5,18 @@ projects_root="/Users/donaichu/Workspaces/projects"
 declare -a projects=()
 mode_all=false
 mode_zip=false
+keep_history=false
 dry_run=false
 
 usage() {
   cat <<'EOF'
 Usage:
-  project-release.sh [--projects-root PATH] (--all | --project NAME ...) [--zip] [--dry-run]
+  project-release.sh [--projects-root PATH] (--all | --project NAME ...) [--zip] [--keep-history] [--dry-run]
 
 Notes:
   - Creates a zip for distribution.
+  - Default behavior keeps exactly 1 zip per project: `release/<project>.zip`
+    - Use `--keep-history` to keep timestamped zips.
   - Packages: README + payload
     - Prefer `release/app/` or `release/web/` if present
     - Otherwise auto-prepares from `src/` (-> app/) or `dist/` (-> web/) if present
@@ -27,6 +30,7 @@ while [ $# -gt 0 ]; do
     --project) projects+=("$2"); shift 2 ;;
     --all) mode_all=true; shift ;;
     --zip) mode_zip=true; shift ;;
+    --keep-history) keep_history=true; shift ;;
     --dry-run) dry_run=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown arg: $1" >&2; usage; exit 2 ;;
@@ -105,7 +109,12 @@ zip_one() {
 
   local safe_name
   safe_name="$(printf '%s' "$name" | tr ' ' '_' )"
-  local out_zip="$release_dir/${safe_name}-${timestamp}.zip"
+  local out_zip
+  if $keep_history; then
+    out_zip="$release_dir/${safe_name}-${timestamp}.zip"
+  else
+    out_zip="$release_dir/${safe_name}.zip"
+  fi
 
   if ! $mode_zip; then
     echo "OK: $name (zip disabled)"
@@ -117,7 +126,12 @@ zip_one() {
     return 0
   fi
 
-  rm -f "$out_zip"
+  if $keep_history; then
+    rm -f "$out_zip"
+  else
+    # Keep exactly one zip per project by default.
+    rm -f "$release_dir/${safe_name}.zip"
+  fi
 
   local tmpdir
   tmpdir="$(mktemp -d)"
