@@ -735,3 +735,72 @@ MM handoff.md
 - ChangedFiles (snapshot, top 20):
 
   - (none)
+
+## 2026-01-02 18:42 - Tool: terminal - Mode: full
+
+- Purpose: (carry) Make release zip output single-file by default
+- Now: (carry) project-release.sh now outputs release/<project>.zip by default; add --keep-history for timestamped zips; docs updated
+- Next: 次回: project-release.sh --all --zip で最新zipを再生成し、古いタイムスタンプzipを削除する
+- Risk: (carry) project-normalize is intentionally conservative; some repos still have legacy folders (samples/deliverables) but are not
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  - (none)
+
+## 2026-01-02 19:19 - Tool: terminal - Mode: full
+
+- Purpose: Record project-scaffold skill update status
+- Now: Updated System/Skills/.claude/skills/project-scaffold/SKILL.md to call SSOT scripts; push failed due to remote divergenc
+- Next: Decide whether to push System/Skills (project-scaffold updated) and run sync-claude-skills.sh; if needed, pull/rebase or fix remote
+- Risk: System/Skills remote matches SecondBrain; push requires pull/rebase or remote fix
+- Decision: Hold System/Skills push until user confirms; endwork on SecondBrain only
+
+### Auto (git)
+
+- Repo: /Users/donaichu/Library/Mobile Documents/iCloud~md~obsidian/Documents/SecondBrain
+- GitBranch: main
+- GitStatus (snapshot, top 20 lines):
+
+```text
+## main...origin/main
+ M handoff.md
+```
+
+- GitDiffStat (unstaged, snapshot, top 20 lines):
+
+```text
+ handoff.md | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+```
+
+- GitDiffStat (staged, snapshot, top 20 lines):
+
+```text
+
+```
+
+- ChangedFiles (snapshot, top 20):
+
+  -  M handoff.md
