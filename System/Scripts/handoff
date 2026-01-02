@@ -347,7 +347,8 @@ if [[ -n "$REPO_ROOT" ]]; then
   STATUS_SNAPSHOT="$(git -C "$REPO_ROOT" status -sb 2>/dev/null | head -n "$STATUS_MAX_LINES" || true)"
   DIFFSTAT_UNSTAGED_SNAPSHOT="$(git -C "$REPO_ROOT" diff --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true)"
   DIFFSTAT_STAGED_SNAPSHOT="$(git -C "$REPO_ROOT" diff --staged --stat 2>/dev/null | head -n "$DIFFSTAT_MAX_LINES" || true)"
-  CHANGED_FILES_SNAPSHOT="$(git -C "$REPO_ROOT" status --porcelain 2>/dev/null || true)"
+  # Use --short instead of --porcelain to avoid octal-encoded filenames
+  CHANGED_FILES_SNAPSHOT="$(git -C "$REPO_ROOT" status --short 2>/dev/null || true)"
 fi
 
 {
