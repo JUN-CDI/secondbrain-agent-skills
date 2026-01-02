@@ -109,11 +109,32 @@ fi
 
 # Create directories
 echo -e "${YELLOW}📁 Creating folder structure...${NC}"
-mkdir -p "$PROJECT_DIR"/{docs,samples,deliverables,.vscode}
+mkdir -p "$PROJECT_DIR"/{docs,src,tests,scripts,tmp,release,samples,deliverables,.vscode}
 mkdir -p "$PROJECT_DIR/.cursor"/{commands,rules}
 touch "$PROJECT_DIR/docs/.gitkeep"
+touch "$PROJECT_DIR/src/.gitkeep"
+touch "$PROJECT_DIR/tests/.gitkeep"
+touch "$PROJECT_DIR/scripts/.gitkeep"
+touch "$PROJECT_DIR/tmp/.gitkeep"
+touch "$PROJECT_DIR/release/.gitkeep"
 touch "$PROJECT_DIR/samples/.gitkeep"
 touch "$PROJECT_DIR/deliverables/.gitkeep"
+
+# Create release README (distribution SSOT)
+cat > "$PROJECT_DIR/release/README-配布手順.md" << EOF
+# 配布手順（$PROJECT_NAME）
+
+## 方針
+- 配布物は \`release/\` に集約します
+- サンプルは同梱しません
+- 配布時は \`release/\` から zip を作って渡します
+
+## 配布物（中身）
+- TODO: \`release/app/\` または \`release/web/\` に「渡すもの」を入れる
+
+## 使い方（受け手）
+- TODO: 最短手順を書く
+EOF
 
 # Create handoff SSOT
 cat > "$PROJECT_DIR/handoff.md" << 'EOF'
@@ -342,6 +363,11 @@ cat > "$PROJECT_DIR/CLAUDE.md" << EOF
 ├── README.md        # Project overview
 ├── .gitignore       # Git exclusions
 ├── docs/            # Design docs, specs
+├── src/             # Implementation
+├── tests/           # Tests / checks
+├── scripts/         # Helper scripts
+├── tmp/             # Throwaway / scratch
+├── release/         # Distribution (no samples; zip from here)
 ├── samples/         # Sample inputs/fixtures
 └── deliverables/    # Output files (excluded from Git)
 \`\`\`
@@ -400,6 +426,11 @@ cat > "$PROJECT_DIR/README.md" << EOF
 
 ## フォルダ構成
 - docs/ - 仕様・設計メモ
+- src/ - 実装
+- tests/ - 検証
+- scripts/ - 補助作業
+- tmp/ - 一時作業
+- release/ - 配布物（サンプル同梱しない。zipはここから作る）
 - samples/ - サンプル入力/fixture（Git管理外）
 - deliverables/ - 書き出し成果物（Git管理外）
 
@@ -431,6 +462,12 @@ cat > "$PROJECT_DIR/.gitignore" << EOF
 # Output (exclude from Git)
 /deliverables/*
 !/deliverables/.gitkeep
+
+# Release (distribution package)
+/release/*.zip
+/release/*
+!/release/README-配布手順.md
+!/release/.gitkeep
 EOF
 
 # Add type-specific ignores

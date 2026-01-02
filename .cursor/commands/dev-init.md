@@ -19,7 +19,9 @@
 
 手順:
 1. Vaultルートで `./System/Scripts/dev-init.sh <project> <type> [flags]` を実行
-2. 結果を要約し、次のステップとして `/project-init <project> <status>` を案内
+2. `release/README-配布手順.md` が作成されるので、配布手順を最短で埋める
+3. （配布zip作成）`./System/Scripts/project-release.sh --project "<project>" --zip`
+4. 結果を要約し、次のステップとして `/project-init <project> <status>` を案内
 
 例:
 ```bash

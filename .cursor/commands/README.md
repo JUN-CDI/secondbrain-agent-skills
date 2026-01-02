@@ -36,6 +36,9 @@
 ### /dev-init [プロジェクト名] [タイプ] [--github]
 **説明**: ローカル（`~/Workspaces/projects/`）に開発フォルダを作成（`System/Scripts/dev-init.sh` を実行）
 
+### /project-release
+**説明**: `release/` から配布用zipを作成（`System/Scripts/project-release.sh` を実行）
+
 ### /handoff
 **説明**: 再開SSOT（repo直下 `handoff.md`）を更新する手順を案内（実体はターミナルの `handoff` / `endwork`）
 
